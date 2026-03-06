@@ -1,76 +1,92 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
+/**
+ * Smart configuration with defaults
+ * Only requires JWT_SECRET to be set!
+ */
 
 export const config = {
-  // Server Configuration
-  nodeEnv: process.env.NODE_ENV || 'development',
-  port: parseInt(process.env.PORT || '3001', 10),
-  apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3001',
-
-  // Supabase Configuration
-  supabase: {
-    url: process.env.SUPABASE_URL || '',
-    anonKey: process.env.SUPABASE_ANON_KEY || '',
-    serviceKey: process.env.SUPABASE_SERVICE_KEY || '',
+  // Server
+  server: {
+    port: parseInt(process.env.PORT || '3001', 10),
+    nodeEnv: process.env.NODE_ENV || 'development',
   },
 
-  // Database Configuration
+  // JWT (ONLY REQUIRED ENV VAR)
+  jwt: {
+    secret: process.env.JWT_SECRET || 'dev-secret-change-in-production',
+    expiresIn: process.env.JWT_EXPIRATION || '24h',
+  },
+
+  // Database (Auto SQLite)
   database: {
+    type: process.env.DATABASE_URL ? 'postgresql' : 'sqlite',
     url: process.env.DATABASE_URL || '',
   },
 
-  // JWT Configuration
-  jwt: {
-    secret: process.env.JWT_SECRET || 'change-this-secret',
-    expiration: process.env.JWT_EXPIRATION || '24h',
-  },
-
-  // Rate Limiting
-  rateLimit: {
-    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
-    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
-  },
-
-  // Monitoring Configuration
+  // Monitoring (Smart Defaults)
   monitoring: {
-    scanIntervalMs: parseInt(process.env.SCAN_INTERVAL_MS || '60000', 10),
-    anomalyDetectionEnabled: process.env.ANOMALY_DETECTION_ENABLED === 'true',
-    anomalyThresholdSigma: parseFloat(process.env.ANOMALY_THRESHOLD_SIGMA || '3'),
+    scanInterval: parseInt(process.env.SCAN_INTERVAL_MS || '60000', 10),
+    anomalyDetection: process.env.ANOMALY_DETECTION_ENABLED !== 'false',
+    anomalyThreshold: parseFloat(process.env.ANOMALY_THRESHOLD_SIGMA || '3'),
   },
 
-  // Pattern Analysis
-  patternAnalysis: {
-    intervalMs: parseInt(process.env.PATTERN_ANALYSIS_INTERVAL || '300000', 10),
+  // Pattern Analysis (Smart Defaults)
+  patterns: {
+    analysisInterval: parseInt(process.env.PATTERN_ANALYSIS_INTERVAL || '300000', 10),
     minConfidence: parseFloat(process.env.MIN_PATTERN_CONFIDENCE || '0.7'),
     minOccurrences: parseInt(process.env.MIN_PATTERN_OCCURRENCES || '3', 10),
   },
 
-  // Notification Configuration
-  notification: {
-    enabled: process.env.NOTIFICATION_ENABLED === 'true',
-    slackWebhookUrl: process.env.SLACK_WEBHOOK_URL || '',
-    emailServiceApiKey: process.env.EMAIL_SERVICE_API_KEY || '',
+  // Alerts (Auto-enabled, configure to use)
+  alerts: {
+    email: {
+      enabled: !!process.env.SMTP_USER && !!process.env.SMTP_PASSWORD,
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587', 10),
+      secure: process.env.SMTP_SECURE === 'true',
+      user: process.env.SMTP_USER || '',
+      password: process.env.SMTP_PASSWORD || '',
+      from: process.env.EMAIL_FROM || 'panopticon@example.com',
+      to: process.env.ALERT_EMAIL_TO || 'admin@example.com',
+    },
+    telegram: {
+      enabled: !!process.env.TELEGRAM_BOT_TOKEN && !!process.env.TELEGRAM_CHAT_ID,
+      botToken: process.env.TELEGRAM_BOT_TOKEN || '',
+      chatId: process.env.TELEGRAM_CHAT_ID || '',
+    },
+    slack: {
+      enabled: !!process.env.SLACK_WEBHOOK_URL,
+      webhookUrl: process.env.SLACK_WEBHOOK_URL || '',
+    },
   },
 
-  // Logging Configuration
+  // Integrations (All optional)
+  integrations: {
+    atlas: {
+      enabled: !!process.env.ATLAS_DB_CONNECTION,
+      dbConnection: process.env.ATLAS_DB_CONNECTION || '',
+      endpoint: process.env.ATLAS_NOTIFICATION_ENDPOINT || '',
+      apiKey: process.env.ATLAS_API_KEY || '',
+    },
+    notion: {
+      enabled: !!process.env.NOTION_API_KEY,
+      apiKey: process.env.NOTION_API_KEY || '',
+      databaseId: process.env.NOTION_DATABASE_ID || '',
+      pageId: process.env.NOTION_PAGE_ID || '',
+    },
+  },
+
+  // Logging (Smart Defaults)
   logging: {
     level: process.env.LOG_LEVEL || 'info',
     filePath: process.env.LOG_FILE_PATH || './logs/panopticon.log',
   },
 
-  // Cleanup Configuration
-  cleanup: {
-    retentionDays: parseInt(process.env.RETENTION_DAYS || '90', 10),
-    intervalMs: parseInt(process.env.CLEANUP_INTERVAL || '86400000', 10),
-  },
-
-  // Feature Flags
+  // Features (All enabled by default)
   features: {
-    sentimentAnalysis: process.env.ENABLE_SENTIMENT_ANALYSIS === 'true',
-    relationshipMapping: process.env.ENABLE_RELATIONSHIP_MAPPING === 'true',
-    temporalForecasting: process.env.ENABLE_TEMPORAL_FORECASTING === 'true',
+    sentimentAnalysis: process.env.ENABLE_SENTIMENT_ANALYSIS !== 'false',
+    relationshipMapping: process.env.ENABLE_RELATIONSHIP_MAPPING !== 'false',
+    temporalForecasting: process.env.ENABLE_TEMPORAL_FORECASTING !== 'false',
+    realtimeUpdates: process.env.ENABLE_REALTIME_UPDATES !== 'false',
+    dashboard: process.env.ENABLE_DASHBOARD !== 'false',
   },
 };
-
-export default config;

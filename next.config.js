@@ -8,15 +8,11 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  // Image optimization
-  images: {
-    domains: ['localhost'],
-    formats: ['image/avif', 'image/webp'],
-  },
-
-  // Environment variables
+  // Auto-configure environment
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+    // Auto-detect or use smart defaults
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 
+                         process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3001',
     NEXT_PUBLIC_WS_URL: process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002',
   },
 
@@ -28,6 +24,7 @@ const nextConfig = {
         fs: false,
         net: false,
         tls: false,
+        'better-sqlite3': false,
       };
     }
     return config;
