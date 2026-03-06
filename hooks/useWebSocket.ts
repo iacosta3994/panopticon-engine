@@ -1,106 +1,108 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import logger from '../src/lib/logger';
 
 interface UseWebSocketOptions {
   autoConnect?: boolean;
-  reconnectionAttempts?: number;
-  reconnectionDelay?: number;
+  reconnect?: boolean;
 }
 
-export function useWebSocket(url: string, options: UseWebSocketOptions = {}) {
-  const {
-    autoConnect = true,
-    reconnectionAttempts = 5,
-    reconnectionDelay = 1000,
-  } = options;
-
+export function useWebSocket(options: UseWebSocketOptions = {}) {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  const reconnectCount = useRef(0);
+  const [connected, setConnected] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const connect = useCallback(() => {
     try {
-      const newSocket = io(url, {
+      const newSocket = io(process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002', {
         auth: {
           token: localStorage.getItem('auth_token') || '',
         },
-        reconnectionAttempts,
-        reconnectionDelay,
+        reconnection: options.reconnect !== false,
       });
 
       newSocket.on('connect', () => {
-        setIsConnected(true);
+        setConnected(true);
         setError(null);
-        reconnectCount.current = 0;
         console.log('WebSocket connected');
       });
 
       newSocket.on('disconnect', () => {
-        setIsConnected(false);
+        setConnected(false);
         console.log('WebSocket disconnected');
       });
 
       newSocket.on('connect_error', (err) => {
-        setError(err);
+        setError(err.message);
         console.error('WebSocket connection error:', err);
       });
 
       setSocket(newSocket);
-    } catch (err) {
-      setError(err as Error);
+    } catch (err: any) {
+      setError(err.message);
     }
-  }, [url, reconnectionAttempts, reconnectionDelay]);
+  }, [options.reconnect]);
 
   const disconnect = useCallback(() => {
     if (socket) {
       socket.disconnect();
       setSocket(null);
-      setIsConnected(false);
+      setConnected(false);
     }
   }, [socket]);
 
-  const emit = useCallback(
-    (event: string, data?: any) => {
-      if (socket && isConnected) {
-        socket.emit(event, data);
-      }
-    },
-    [socket, isConnected]
-  );
+  const subscribe = useCallback((room: string) => {
+    if (socket && connected) {
+      socket.emit('subscribe', room);
+    }
+  }, [socket, connected]);
 
-  const subscribe = useCallback(
-    (event: string, handler: (data: any) => void) => {
-      if (socket) {
-        socket.on(event, handler);
-        return () => {
-          socket.off(event, handler);
-        };
-      }
-    },
-    [socket]
-  );
+  const unsubscribe = useCallback((room: string) => {
+    if (socket && connected) {
+      socket.emit('unsubscribe', room);
+    }
+  }, [socket, connected]);
+
+  const on = useCallback((event: string, callback: (data: any) => void) => {
+    if (socket) {
+      socket.on(event, callback);
+    }
+  }, [socket]);
+
+  const off = useCallback((event: string) => {
+    if (socket) {
+      socket.off(event);
+    }
+  }, [socket]);
+
+  const emit = useCallback((event: string, data: any) => {
+    if (socket && connected) {
+      socket.emit(event, data);
+    }
+  }, [socket, connected]);
 
   useEffect(() => {
-    if (autoConnect) {
+    if (options.autoConnect !== false) {
       connect();
     }
 
     return () => {
       disconnect();
     };
-  }, [autoConnect, connect, disconnect]);
+  }, [options.autoConnect]);
 
   return {
     socket,
-    isConnected,
+    connected,
     error,
     connect,
     disconnect,
-    emit,
     subscribe,
+    unsubscribe,
+    on,
+    off,
+    emit,
   };
 }

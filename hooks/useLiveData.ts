@@ -3,51 +3,47 @@
 import { useEffect, useState } from 'react';
 import { useWebSocket } from './useWebSocket';
 
-interface UseLiveDataOptions<T> {
+interface UseLiveDataOptions {
   room: string;
   event: string;
-  initialData?: T[];
-  maxItems?: number;
+  initialData?: any[];
 }
 
-export function useLiveData<T>({
+export function useLiveData<T = any>({
   room,
   event,
   initialData = [],
-  maxItems = 100,
-}: UseLiveDataOptions<T>) {
-  const { socket, isConnected, subscribe } = useWebSocket(
-    process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002'
-  );
-  const [data, setData] = useState<T[]>(initialData);
+}: UseLiveDataOptions) {
+  const [data, setData] = useState<T[]>(initialData as T[]);
   const [loading, setLoading] = useState(true);
+  const { connected, subscribe, unsubscribe, on, off } = useWebSocket();
 
   useEffect(() => {
-    if (!socket || !isConnected) return;
+    if (connected) {
+      subscribe(room);
 
-    // Subscribe to room
-    socket.emit('subscribe', room);
-
-    // Listen for new data
-    const unsubscribe = subscribe?.(event, (newItem: T) => {
-      setData((prev) => {
-        const updated = [newItem, ...prev];
-        return updated.slice(0, maxItems);
+      // Listen for new data
+      on(event, (newItem: T) => {
+        setData(prev => [newItem, ...prev].slice(0, 100)); // Keep last 100 items
       });
-    });
 
-    // Request initial data
-    socket.emit(`request:${room}`);
-    socket.once(`${room}:initial`, (initialItems: T[]) => {
-      setData(initialItems.slice(0, maxItems));
+      // Listen for initial data
+      on(`${event}:initial`, (initialItems: T[]) => {
+        setData(initialItems);
+        setLoading(false);
+      });
+
       setLoading(false);
-    });
+    }
 
     return () => {
-      socket.emit('unsubscribe', room);
-      unsubscribe?.();
+      if (connected) {
+        off(event);
+        off(`${event}:initial`);
+        unsubscribe(room);
+      }
     };
-  }, [socket, isConnected, room, event, maxItems, subscribe]);
+  }, [connected, room, event]);
 
-  return { data, loading, isConnected };
+  return { data, loading, connected };
 }

@@ -1,75 +1,53 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useWebSocket } from './useWebSocket';
 import toast from 'react-hot-toast';
-
-interface Alert {
-  id: string;
-  title: string;
-  severity: string;
-  message?: string;
-  triggered_at: string;
-}
+import { Alert } from '../src/lib/types';
 
 export function useRealTimeAlerts() {
-  const { socket, isConnected, subscribe } = useWebSocket(
-    process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:3002'
-  );
-  const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { connected, subscribe, on, off } = useWebSocket();
 
   useEffect(() => {
-    if (!socket || !isConnected) return;
+    if (connected) {
+      subscribe('alerts');
 
-    // Subscribe to alerts room
-    socket.emit('subscribe', 'alerts');
-
-    // Listen for new alerts
-    const unsubscribe = subscribe?.('alert:new', (alert: Alert) => {
-      setAlerts((prev) => [alert, ...prev]);
-      setUnreadCount((prev) => prev + 1);
-
-      // Show toast notification
-      const emoji = getSeverityEmoji(alert.severity);
-      toast(
-        <div>
-          <div className="font-bold">{emoji} {alert.title}</div>
-          <div className="text-sm text-slate-400">{alert.message}</div>
-        </div>,
-        {
-          duration: 5000,
-          style: {
-            background: '#1e293b',
-            color: '#fff',
-            border: '1px solid rgba(0, 243, 255, 0.3)',
-          },
-        }
-      );
-    });
-
-    // Request initial alerts
-    socket.emit('request:alerts');
-    socket.once('alerts:initial', (initialAlerts: Alert[]) => {
-      setAlerts(initialAlerts);
-    });
+      on('alert:new', (alert: Alert) => {
+        // Show toast notification
+        const emoji = getSeverityEmoji(alert.severity);
+        
+        toast.custom(
+          <div className="bg-slate-800 border border-red-500/50 rounded-lg p-4 shadow-lg">
+            <div className="flex items-start space-x-3">
+              <span className="text-2xl">{emoji}</span>
+              <div>
+                <div className="font-semibold text-white">{alert.title}</div>
+                <div className="text-sm text-slate-300 mt-1">{alert.message}</div>
+                <div className="flex items-center space-x-2 mt-2">
+                  <span className="text-xs px-2 py-0.5 bg-red-500/20 border border-red-500/30 rounded text-red-400">
+                    {alert.severity}
+                  </span>
+                  <span className="text-xs text-slate-400">
+                    {new Date(alert.triggered_at).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>,
+          {
+            duration: 6000,
+            position: 'top-right',
+          }
+        );
+      });
+    }
 
     return () => {
-      socket.emit('unsubscribe', 'alerts');
-      unsubscribe?.();
+      if (connected) {
+        off('alert:new');
+      }
     };
-  }, [socket, isConnected, subscribe]);
-
-  const markAllAsRead = () => {
-    setUnreadCount(0);
-  };
-
-  const clearAlerts = () => {
-    setAlerts([]);
-    setUnreadCount(0);
-  };
-
-  return { alerts, unreadCount, markAllAsRead, clearAlerts, isConnected };
+  }, [connected]);
 }
 
 function getSeverityEmoji(severity: string): string {
