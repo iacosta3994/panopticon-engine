@@ -1,6 +1,6 @@
 /**
- * Smart configuration with defaults
- * Only requires JWT_SECRET to be set!
+ * Configuration with smart defaults
+ * Requires Supabase connection but simplifies other settings
  */
 
 export const config = {
@@ -10,16 +10,17 @@ export const config = {
     nodeEnv: process.env.NODE_ENV || 'development',
   },
 
-  // JWT (ONLY REQUIRED ENV VAR)
+  // JWT (Required)
   jwt: {
-    secret: process.env.JWT_SECRET || 'dev-secret-change-in-production',
+    secret: process.env.JWT_SECRET || '',
     expiresIn: process.env.JWT_EXPIRATION || '24h',
   },
 
-  // Database (Auto SQLite)
-  database: {
-    type: process.env.DATABASE_URL ? 'postgresql' : 'sqlite',
-    url: process.env.DATABASE_URL || '',
+  // Supabase (Required - Original Architecture)
+  supabase: {
+    url: process.env.SUPABASE_URL || '',
+    anonKey: process.env.SUPABASE_ANON_KEY || '',
+    serviceKey: process.env.SUPABASE_SERVICE_KEY || '',
   },
 
   // Monitoring (Smart Defaults)
@@ -36,7 +37,13 @@ export const config = {
     minOccurrences: parseInt(process.env.MIN_PATTERN_OCCURRENCES || '3', 10),
   },
 
-  // Alerts (Auto-enabled, configure to use)
+  // Rate Limiting (Smart Defaults)
+  rateLimit: {
+    windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10),
+    maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10),
+  },
+
+  // Alerts (Auto-enabled when credentials provided)
   alerts: {
     email: {
       enabled: !!process.env.SMTP_USER && !!process.env.SMTP_PASSWORD,
@@ -88,5 +95,11 @@ export const config = {
     temporalForecasting: process.env.ENABLE_TEMPORAL_FORECASTING !== 'false',
     realtimeUpdates: process.env.ENABLE_REALTIME_UPDATES !== 'false',
     dashboard: process.env.ENABLE_DASHBOARD !== 'false',
+  },
+
+  // Cleanup (Smart Defaults)
+  cleanup: {
+    retentionDays: parseInt(process.env.RETENTION_DAYS || '90', 10),
+    cleanupInterval: parseInt(process.env.CLEANUP_INTERVAL || '86400000', 10),
   },
 };

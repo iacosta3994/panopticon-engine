@@ -4,31 +4,37 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-console.log('\n🚀 Panopticon Engine - Auto Setup\n');
+console.log('\n🚀 Panopticon Engine - Setup Helper\n');
 
-// Create .env if it doesn't exist
+// Create .env from example if it doesn't exist
 const envPath = path.join(__dirname, '..', '.env');
 const envExamplePath = path.join(__dirname, '..', '.env.example');
 
 if (!fs.existsSync(envPath)) {
-  console.log('📝 Creating .env file...');
+  console.log('📝 Creating .env file from template...');
   
-  // Generate random JWT secret
-  const jwtSecret = crypto.randomBytes(32).toString('base64');
-  
-  const envContent = `# Auto-generated on ${new Date().toISOString()}\n\n# JWT Secret (Auto-generated)\nJWT_SECRET=${jwtSecret}\n\n# Everything else uses smart defaults!\n# Add optional integrations below as needed:\n\n# Email (Optional)\n# SMTP_USER=your-email@gmail.com\n# SMTP_PASSWORD=your-app-password\n\n# Telegram (Optional)\n# TELEGRAM_BOT_TOKEN=your-bot-token\n# TELEGRAM_CHAT_ID=your-chat-id\n`;
-  
-  fs.writeFileSync(envPath, envContent);
-  console.log('✅ .env file created with auto-generated JWT_SECRET\n');
+  if (fs.existsSync(envExamplePath)) {
+    let envContent = fs.readFileSync(envExamplePath, 'utf8');
+    
+    // Auto-generate JWT secret
+    const jwtSecret = crypto.randomBytes(32).toString('base64');
+    envContent = envContent.replace(
+      'JWT_SECRET=your-random-secret-key-here',
+      `JWT_SECRET=${jwtSecret}`
+    );
+    
+    fs.writeFileSync(envPath, envContent);
+    console.log('✅ .env file created');
+    console.log('✅ JWT_SECRET auto-generated\n');
+    console.log('⚠️  IMPORTANT: You still need to add Supabase credentials:');
+    console.log('   1. Go to https://supabase.com');
+    console.log('   2. Create a new project (takes 2 minutes)');
+    console.log('   3. Go to Settings → API');
+    console.log('   4. Copy SUPABASE_URL and SUPABASE_SERVICE_KEY');
+    console.log('   5. Add them to your .env file\n');
+  }
 } else {
   console.log('ℹ️  .env file already exists\n');
-}
-
-// Create data directory for SQLite
-const dataDir = path.join(__dirname, '..', 'data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
-  console.log('✅ Data directory created\n');
 }
 
 // Create logs directory
@@ -38,8 +44,8 @@ if (!fs.existsSync(logsDir)) {
   console.log('✅ Logs directory created\n');
 }
 
-console.log('🎉 Setup complete! The system is ready to use.\n');
+console.log('🎉 Setup complete!\n');
 console.log('Next steps:');
-console.log('  1. npm run dev    (start development server)');
-console.log('  2. npm run build  (build for production)');
-console.log('  3. npm start      (start production server)\n');
+console.log('  1. Add Supabase credentials to .env (see above)');
+console.log('  2. Run migration: psql $SUPABASE_URL -f migrations/*.sql');
+console.log('  3. npm run dev\n');
