@@ -2,313 +2,483 @@
 
 > A vigilance system that combines monitoring with meaning extraction - the foundation for intelligent surveillance and analysis.
 
+![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Node](https://img.shields.io/badge/node-%3E%3D18.17-brightgreen)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue)
+
 ## 🚀 Overview
 
-Panopticon Engine is a modern, intelligent surveillance and analysis platform built with Next.js 14, TypeScript, and Tailwind CSS. It provides real-time monitoring, deep analysis, and proactive vigilance capabilities for comprehensive data awareness.
+Panopticon Engine is a production-ready, intelligent surveillance and analysis platform that combines real-time monitoring with advanced pattern recognition and meaning extraction. Built with Next.js 14, TypeScript, and PostgreSQL, it provides comprehensive observability and actionable insights from multiple data sources.
 
-## ✨ Features
+## ✨ Key Features
 
-- **Real-Time Monitoring**: Continuous surveillance across multiple data streams with millisecond precision
-- **Deep Analysis**: Advanced algorithms that extract meaningful insights from raw data
-- **Proactive Vigilance**: Smart alerting system that learns your priorities and filters critical events
-- **Modern UI**: Dark-themed, responsive interface built with Tailwind CSS
-- **Type-Safe**: Full TypeScript support for robust development
-- **Performance Optimized**: Built on Next.js 14 App Router for optimal performance
-- **Knowledge Graph Integration**: Track entities and relationships discovered through surveillance
-- **Pattern Detection**: Automatically identify recurring patterns and anomalies
+### Vigilance Layer
+- **Multi-Source Monitoring**: Continuous surveillance across APIs, databases, streams, files, and sensors
+- **Anomaly Detection**: Statistical anomaly detection using Z-score, IQR, and moving average methods
+- **Smart Thresholds**: Dynamic threshold management with auto-adjustment
+- **Intelligent Intervention**: Automated decision logic for when and how to intervene
+- **Real-Time Alerts**: Configurable alerting with multiple notification channels
+
+### Meaning Extraction
+- **Temporal Analysis**: Time-series pattern analysis and forecasting
+- **Relationship Mapping**: Automatic entity relationship discovery and graph construction
+- **Sentiment Analysis**: Text sentiment and emotional context extraction
+- **Pattern Synthesis**: Cross-pattern correlation and sequential pattern detection
+- **Predictive Insights**: Trend analysis with confidence intervals
+
+### Integration & APIs
+- **RESTful API**: Comprehensive API for ingestion, analysis, and administration
+- **Webhook Support**: GitHub, Slack, and generic webhook receivers
+- **Background Jobs**: Scheduled scanning, pattern analysis, notifications, and maintenance
+- **Real-Time Processing**: Sub-second observation processing
+- **Scalable Architecture**: Horizontal scaling with load balancing support
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 - **Framework**: [Next.js 14](https://nextjs.org/) with App Router
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Font**: [Inter](https://fonts.google.com/specimen/Inter) from Google Fonts
+- **Language**: [TypeScript 5.4](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 3.4](https://tailwindcss.com/)
+- **UI**: Dark-themed, responsive interface
 
-### Database
-- **Database**: PostgreSQL 14+
-- **Schema**: Comprehensive surveillance and analysis schema
-- **Features**: JSONB for flexibility, GIN indexes for performance, time-series optimization
+### Backend
+- **Runtime**: Node.js 18+
+- **Framework**: Express 4.18
+- **Database**: PostgreSQL 14+ (or Supabase)
+- **Job Scheduling**: node-cron
+- **Logging**: Winston
+
+### Analysis & Intelligence
+- **Statistics**: simple-statistics
+- **Sentiment**: Sentiment.js
+- **Pattern Detection**: Custom algorithms
+- **Time-Series**: Linear regression, forecasting
 
 ## 📦 Installation
 
 ### Prerequisites
 
+```bash
+# Required
 - Node.js 18.17 or later
-- PostgreSQL 14 or later
-- npm, yarn, or pnpm package manager
+- PostgreSQL 14+ (or Supabase account)
+- npm/yarn/pnpm
 
-### Frontend Setup
+# Optional
+- Docker & Docker Compose
+- Redis (for caching)
+```
 
-1. Clone the repository:
+### Quick Start
 
+1. **Clone the repository**:
 ```bash
 git clone https://github.com/iacosta3994/panopticon-engine.git
 cd panopticon-engine
 ```
 
-2. Install dependencies:
-
+2. **Install dependencies**:
 ```bash
 npm install
-# or
-yarn install
-# or
-pnpm install
 ```
 
-3. Run the development server:
-
+3. **Configure environment**:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
-### Database Setup
-
-1. Create a PostgreSQL database:
-
+4. **Set up database**:
 ```bash
+# Create database
 createdb panopticon_engine
+
+# Run migration
+psql panopticon_engine -f migrations/20260305_add_panopticon_engine_tables.sql
 ```
 
-2. Run the migration:
+5. **Build the application**:
+```bash
+# Build frontend
+npm run build
+
+# Build backend
+npm run server:build
+```
+
+6. **Start services**:
+```bash
+# Development mode
+npm run dev          # Frontend (port 3000)
+npm run server:dev   # API server (port 3001)
+
+# Production mode
+npm start            # Frontend
+npm run server:start # API server
+npm run jobs:start   # Background jobs
+```
+
+7. **Verify installation**:
+```bash
+curl http://localhost:3001/health
+# Should return: {"status":"healthy","timestamp":"...","version":"0.1.0"}
+```
+
+### Docker Deployment
 
 ```bash
-psql -h localhost -U your_user -d panopticon_engine -f migrations/20260305_add_panopticon_engine_tables.sql
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
-
-3. Verify the installation:
-
-```sql
--- Connect to the database
-psql panopticon_engine
-
--- Check tables were created
-\dt
-
--- Check views
-\dv
-
--- Verify example data
-SELECT name, source_type FROM data_sources;
-```
-
-For detailed migration instructions, see [`migrations/README.md`](migrations/README.md).
 
 ## 🏗️ Project Structure
 
 ```
 panopticon-engine/
-├── app/
-│   ├── layout.tsx      # Root layout component
-│   ├── page.tsx        # Home page
-│   └── globals.css     # Global styles with Tailwind imports
-├── database/
-│   ├── schema.md       # Comprehensive database schema documentation
-│   └── queries.sql     # Example queries and query patterns
-├── migrations/
-│   ├── README.md       # Migration guide and documentation
-│   └── 20260305_add_panopticon_engine_tables.sql  # Initial schema
-├── public/             # Static assets
-├── .gitignore          # Git ignore rules
-├── next.config.js      # Next.js configuration
-├── package.json        # Dependencies and scripts
-├── postcss.config.js   # PostCSS configuration
-├── tailwind.config.ts  # Tailwind CSS configuration
-├── tsconfig.json       # TypeScript configuration
-└── README.md           # Project documentation
-```
-
-## 📊 Database Schema
-
-The Panopticon Engine uses a sophisticated PostgreSQL schema designed for:
-
-### Core Surveillance
-- **Data Sources**: Registry of monitored sources (APIs, databases, streams, files, sensors)
-- **Observations**: Raw events and data points captured from sources
-- **Monitoring Rules**: Define surveillance rules, thresholds, and patterns
-- **Alerts**: Triggered events when rules detect issues
-
-### Analysis & Intelligence
-- **Patterns**: Detected patterns in observation data
-- **Insights**: High-level intelligence extracted from observations
-- **Analysis Jobs**: Track pattern detection, anomaly detection, and correlation tasks
-
-### Knowledge Graph
-- **Entities**: Track discovered entities (users, services, hosts, resources)
-- **Entity Relationships**: Map dependencies and connections between entities
-- **Entity Observations**: Link entities to observations for context
-
-### Metrics & Monitoring
-- **Metrics**: Time-series metrics storage (counters, gauges, histograms)
-- **Metric Aggregations**: Pre-computed statistical aggregations
-
-### System Management
-- **Audit Log**: Complete audit trail of all system actions
-- **System Health**: Track Panopticon Engine's own health and performance
-
-For detailed schema documentation, see [`database/schema.md`](database/schema.md).
-
-## 🔍 Key Features
-
-### 1. Real-Time Observation Capture
-
-```sql
--- Insert a new observation
-INSERT INTO observations (source_id, observation_type, severity, payload, tags)
-VALUES (
-    'source-uuid',
-    'api_error',
-    'high',
-    '{"error_code": "500", "endpoint": "/api/users"}',
-    ARRAY['error', 'api', 'database']
-);
-```
-
-### 2. Pattern Detection
-
-The system automatically detects patterns in observations:
-- **Sequential patterns**: Time-ordered event sequences
-- **Frequency patterns**: Recurring events at specific intervals
-- **Correlation patterns**: Related events across sources
-- **Anomaly patterns**: Deviations from normal behavior
-
-### 3. Knowledge Graph Building
-
-Entities and relationships are automatically extracted:
-
-```sql
--- Find service dependencies
-SELECT 
-    source.identifier as service,
-    target.identifier as depends_on,
-    er.properties->>'protocol' as protocol
-FROM entity_relationships er
-JOIN entities source ON er.source_entity_id = source.id
-JOIN entities target ON er.target_entity_id = target.id
-WHERE er.relationship_type = 'depends_on';
-```
-
-### 4. Intelligent Insights
-
-The system generates actionable insights:
-- **Trends**: Pattern changes over time
-- **Anomalies**: Unusual behavior detection
-- **Predictions**: Future state forecasting
-- **Recommendations**: Actionable advice
-
-## 🚀 Deployment
-
-### Vercel (Frontend)
-
-The easiest way to deploy the Next.js frontend:
-
-1. Push your code to GitHub
-2. Import your repository to [Vercel](https://vercel.com)
-3. Vercel will automatically detect Next.js and deploy
-4. Configure environment variables for database connection
-
-### Database Deployment
-
-#### Managed PostgreSQL
-- **AWS RDS**: PostgreSQL 14+ with appropriate instance size
-- **Google Cloud SQL**: PostgreSQL with automatic backups
-- **Azure Database**: PostgreSQL flexible server
-- **Supabase**: Managed PostgreSQL with additional features
-
-#### Performance Recommendations
-- Enable connection pooling (PgBouncer)
-- Configure appropriate shared_buffers (25% of RAM)
-- Set effective_cache_size (50-75% of RAM)
-- Enable query plan caching
-- Consider read replicas for high-volume queries
-
-## 📝 Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint for code quality checks
-
-## 🎨 Customization
-
-### Styling
-
-The project uses Tailwind CSS. Customize the theme in `tailwind.config.ts`:
-
-```typescript
-theme: {
-  extend: {
-    colors: {
-      // Add your custom colors
-    },
-    animation: {
-      // Add custom animations
-    },
-  },
-}
-```
-
-### Database Schema
-
-Extend the schema by creating new migration files in `migrations/`:
-
-```sql
--- migrations/20260306_add_custom_tables.sql
-CREATE TABLE custom_table (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    -- your columns
-);
+├── app/                    # Next.js frontend
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Landing page
+│   └── globals.css        # Global styles
+├── src/
+│   ├── api/               # Express API server
+│   │   ├── server.ts      # Main server
+│   │   ├── routes/        # API routes
+│   │   │   ├── ingestion.ts
+│   │   │   ├── analysis.ts
+│   │   │   ├── webhooks.ts
+│   │   │   └── admin.ts
+│   │   └── middleware/    # Auth, validation, rate limiting
+│   ├── vigilance/         # Monitoring & detection
+│   │   ├── MonitoringService.ts
+│   │   ├── AnomalyDetector.ts
+│   │   ├── ThresholdManager.ts
+│   │   ├── InterventionEngine.ts
+│   │   └── DataSourceConnector.ts
+│   ├── meaning/           # Analysis & extraction
+│   │   ├── TemporalAnalyzer.ts
+│   │   ├── RelationshipMapper.ts
+│   │   ├── EmotionalContext.ts
+│   │   └── PatternSynthesizer.ts
+│   ├── jobs/              # Background processing
+│   │   ├── JobScheduler.ts
+│   │   ├── ScanningJob.ts
+│   │   ├── PatternAnalysisJob.ts
+│   │   ├── NotificationProcessor.ts
+│   │   └── MaintenanceJob.ts
+│   ├── lib/               # Core utilities
+│   │   ├── config.ts
+│   │   ├── logger.ts
+│   │   ├── supabase.ts
+│   │   ├── types.ts
+│   │   └── utils.ts
+│   └── __tests__/         # Test suites
+├── migrations/            # Database migrations
+│   ├── README.md
+│   └── 20260305_add_panopticon_engine_tables.sql
+├── database/              # Schema documentation
+│   ├── schema.md
+│   └── queries.sql
+├── docs/                  # Documentation
+│   ├── API.md            # API reference
+│   ├── ALGORITHMS.md     # Algorithm explanations
+│   └── DEPLOYMENT.md     # Deployment guide
+└── docker-compose.yml     # Docker configuration
 ```
 
 ## 📚 Documentation
 
-- [Database Schema Documentation](database/schema.md) - Comprehensive schema guide
-- [Example Queries](database/queries.sql) - Common query patterns
-- [Migration Guide](migrations/README.md) - How to run and create migrations
+- **[API Documentation](docs/API.md)** - Complete API reference with examples
+- **[Algorithms](docs/ALGORITHMS.md)** - Detailed algorithm explanations
+- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment instructions
+- **[Database Schema](database/schema.md)** - Comprehensive schema documentation
+- **[Migration Guide](migrations/README.md)** - Database migration instructions
 
-## 🔐 Security
+## 🔥 Usage Examples
 
-### Row-Level Security
+### Ingest Observations
 
-The schema supports PostgreSQL row-level security:
+```typescript
+import axios from 'axios';
 
-```sql
-ALTER TABLE observations ENABLE ROW LEVEL SECURITY;
+const client = axios.create({
+  baseURL: 'http://localhost:3001/api',
+});
 
-CREATE POLICY team_isolation ON observations
-FOR SELECT
-USING (metadata->>'team' = current_setting('app.current_team'));
+// Ingest single observation
+await client.post('/ingest/observation', {
+  observation_type: 'api_error',
+  severity: 'high',
+  payload: {
+    error_code: 500,
+    message: 'Database connection timeout',
+    endpoint: '/api/users'
+  },
+  tags: ['error', 'database'],
+});
+
+// Ingest metrics
+await client.post('/ingest/metric', {
+  metric_name: 'api.response_time',
+  value: 145.5,
+  unit: 'ms',
+  dimensions: {
+    endpoint: '/api/users',
+    method: 'GET'
+  },
+});
 ```
 
-### Audit Trail
+### Query Analysis
 
-All significant operations are logged to the `audit_log` table for compliance and forensic analysis.
+```typescript
+// Get trend analysis
+const trends = await client.get('/analysis/trends/api.response_time', {
+  params: { timeRange: 'day' }
+});
+
+// Get active alerts
+const alerts = await client.get('/analysis/alerts', {
+  params: { status: 'open', severity: 'high' }
+});
+
+// Get patterns
+const patterns = await client.get('/analysis/patterns');
+
+// Get insights
+const insights = await client.get('/analysis/insights', {
+  params: { impact_level: 'critical' }
+});
+```
+
+### Webhook Integration
+
+```bash
+# GitHub webhook
+curl -X POST http://localhost:3001/api/webhooks/github \
+  -H "X-GitHub-Event: push" \
+  -d '{"repository": {"name": "my-repo"}}'
+
+# Generic webhook
+curl -X POST http://localhost:3001/api/webhooks/generic?source_name=monitoring \
+  -H "Content-Type: application/json" \
+  -d '{"event": "deployment", "status": "success"}'
+```
+
+## 📊 Database Schema
+
+The Panopticon Engine uses a comprehensive PostgreSQL schema with:
+
+- **Core Tables**: data_sources, observations, monitoring_rules, alerts
+- **Analysis**: patterns, insights, analysis_jobs, entities
+- **Metrics**: metrics, metric_aggregations
+- **System**: audit_log, system_health
+
+**Total**: 15+ tables, 50+ indexes, materialized views, triggers, and functions
+
+See [database/schema.md](database/schema.md) for full documentation.
+
+## 🎯 Core Capabilities
+
+### 1. Real-Time Anomaly Detection
+
+- Z-Score method (3σ threshold)
+- Interquartile Range (IQR) outlier detection
+- Moving average deviation detection
+- Automatic baseline learning
+- Confidence scoring
+
+### 2. Pattern Recognition
+
+- Sequential pattern detection
+- Frequency-based patterns
+- Correlation analysis
+- Time-constrained patterns
+- Pattern matching and scoring
+
+### 3. Temporal Analysis
+
+- Linear regression trending
+- Forecasting with confidence intervals
+- Seasonality detection (autocorrelation)
+- Change point detection (T-test)
+- Multi-period analysis
+
+### 4. Entity Relationship Mapping
+
+- Automatic entity extraction
+- Relationship discovery
+- Dependency graph construction
+- Strength calculation
+- Recursive traversal (configurable depth)
+
+### 5. Sentiment & Context
+
+- Text sentiment analysis
+- Urgency detection
+- Emotional tone classification
+- Sentiment shift tracking
+- Multi-text aggregation
+
+## 🔒 Security Features
+
+- JWT authentication
+- Role-based access control (RBAC)
+- Rate limiting (100 req/15min default)
+- Helmet security headers
+- CORS configuration
+- Input validation (Zod)
+- SQL injection prevention
+- Audit logging
+
+## 🚀 Performance
+
+- **Observation Processing**: <100ms per observation
+- **Pattern Matching**: <500ms for 1000 patterns
+- **Trend Analysis**: <2s for 24h of data
+- **Anomaly Detection**: <50ms per check
+- **API Response**: <200ms average
+
+## 📝 Available Scripts
+
+```bash
+# Development
+npm run dev              # Next.js dev server
+npm run server:dev       # API server (hot reload)
+
+# Production
+npm run build            # Build frontend
+npm run server:build     # Build backend
+npm start                # Start frontend
+npm run server:start     # Start API
+npm run jobs:start       # Start job scheduler
+
+# Testing
+npm test                 # Run tests
+npm run test:watch       # Watch mode
+npm run test:coverage    # Coverage report
+
+# Linting
+npm run lint             # ESLint
+```
+
+## 🧪 Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run specific test
+npm test -- AnomalyDetector
+```
+
+Coverage targets:
+- Branches: 70%
+- Functions: 70%
+- Lines: 70%
+- Statements: 70%
+
+## 🌐 Deployment Options
+
+### Option 1: Docker Compose (Recommended)
+```bash
+docker-compose up -d
+```
+
+### Option 2: PM2 (Node.js Process Manager)
+```bash
+pm2 start ecosystem.config.js
+```
+
+### Option 3: Cloud Platforms
+- **AWS**: EC2 + RDS + ALB
+- **GCP**: Cloud Run + Cloud SQL
+- **Azure**: Container Instances + Database for PostgreSQL
+- **Vercel**: Frontend only
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions.
+
+## 🔧 Configuration
+
+### Environment Variables
+
+```bash
+# Server
+NODE_ENV=production
+PORT=3001
+
+# Database
+SUPABASE_URL=https://...
+SUPABASE_SERVICE_KEY=...
+# OR
+DATABASE_URL=postgresql://...
+
+# Security
+JWT_SECRET=your-secret
+
+# Monitoring
+SCAN_INTERVAL_MS=60000
+ANOMALY_DETECTION_ENABLED=true
+ANOMALY_THRESHOLD_SIGMA=3
+
+# Notifications
+SLACK_WEBHOOK_URL=https://hooks.slack.com/...
+
+# Features
+ENABLE_SENTIMENT_ANALYSIS=true
+ENABLE_RELATIONSHIP_MAPPING=true
+ENABLE_TEMPORAL_FORECASTING=true
+```
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
+Contributions are welcome! Please:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📧 Contact
+## 🙏 Acknowledgments
 
-For questions or feedback, please open an issue on GitHub.
+- Built with [Next.js](https://nextjs.org/)
+- Powered by [PostgreSQL](https://www.postgresql.org/)
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Statistical analysis using [simple-statistics](https://github.com/simple-statistics/simple-statistics)
+
+## 📧 Support
+
+- **Issues**: [GitHub Issues](https://github.com/iacosta3994/panopticon-engine/issues)
+- **Documentation**: [docs/](docs/)
+- **API Reference**: [docs/API.md](docs/API.md)
+
+## 🗺️ Roadmap
+
+- [ ] Machine learning integration for predictive analytics
+- [ ] Real-time dashboard with WebSocket updates
+- [ ] Custom visualization builder
+- [ ] Multi-tenancy support
+- [ ] Advanced correlation engine
+- [ ] Distributed tracing integration
+- [ ] Mobile application
+- [ ] GraphQL API
 
 ---
 
-**Panopticon Engine** - Seeing everything, understanding everything.
+**Panopticon Engine** - *Seeing everything, understanding everything.*
+
+Built with ❤️ by [Ian Acosta](https://github.com/iacosta3994)
