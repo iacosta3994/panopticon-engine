@@ -8,115 +8,176 @@
 ![Node](https://img.shields.io/badge/node-%3E%3D18.17-brightgreen)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.4-blue)
 
-## 🚀 One-Click Deploy
+---
 
-Deploy the Panopticon Engine to Vercel in under 2 minutes:
+## 🌟 **Recommended Deployment (Automatic Updates)**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fiacosta3994%2Fpanopticon-engine&project-name=panopticon-engine&repository-name=panopticon-engine)
+The **best way** to deploy Panopticon Engine is through **Vercel's GitHub integration**. This approach provides:
 
-> **Note**: After clicking deploy, you'll need to configure environment variables (see [Required Environment Variables](#-required-environment-variables) below)
+- ✅ **Automatic updates** when you push to your repository
+- ✅ **Preview deployments** for every pull request
+- ✅ **Instant rollbacks** if something breaks
+- ✅ **Environment variable management** through Vercel dashboard
+- ✅ **Free tier available** for personal projects
+- ✅ **Production-ready** with zero configuration
+
+### 📝 Step-by-Step Deployment (5 minutes)
+
+#### **Step 1: Fork This Repository**
+
+1. Click the **Fork** button at the top of this page
+2. This creates your own copy that you can modify
+3. All future updates will deploy automatically!
+
+#### **Step 2: Deploy to Vercel with GitHub Integration**
+
+1. Go to [vercel.com](https://vercel.com)
+2. Sign in with your GitHub account
+3. Click **"Add New..."** → **"Project"**
+4. Find and select **`panopticon-engine`** from your repositories
+5. Click **"Import"**
+
+#### **Step 3: Configure Environment Variables**
+
+In the Vercel project configuration screen, add these **3 required variables**:
+
+```bash
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_KEY=your-service-role-key-here
+JWT_SECRET=generate-random-64-char-string
+```
+
+**Get Supabase credentials**:
+- Go to [supabase.com](https://supabase.com) → Create project
+- Settings → API → Copy URL and service_role key
+- See [Database Setup](#-database-setup) for migration instructions
+
+**Generate JWT secret**:
+```bash
+openssl rand -base64 64
+```
+
+#### **Step 4: Deploy**
+
+1. Click **"Deploy"** in Vercel
+2. Wait ~2 minutes for build
+3. Visit your dashboard at `https://your-app.vercel.app/dashboard`
+4. Done! 🎉
+
+### 🔄 **Automatic Updates**
+
+From now on:
+- **Push to main** → Automatic production deployment
+- **Pull request** → Preview deployment with unique URL
+- **Rollback** → One-click rollback in Vercel dashboard
+
+This is the **recommended approach for production use**.
 
 ---
 
-## 📋 Quick Setup Guide
+## ⚡ Quick Test Deploy (One-Click)
 
-### Step 1: Deploy Frontend (Vercel)
-1. Click the **Deploy with Vercel** button above
-2. Authorize GitHub access
-3. The repository will be cloned to your account
-4. Configure environment variables (see below)
-5. Deploy!
+For **quick testing only** (not recommended for production):
 
-### Step 2: Set Up Database (Supabase)
-1. Go to [supabase.com](https://supabase.com)
-2. Create a new project (free tier available)
-3. Go to Settings → Database → Connection string
-4. Copy the connection string
-5. Run the migration SQL (see [Database Setup](#-database-setup))
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fiacosta3994%2Fpanopticon-engine&project-name=panopticon-engine&repository-name=panopticon-engine)
 
-### Step 3: Configure Environment Variables
-Add these to your Vercel project settings:
+> ⚠️ **Note**: This creates a clone that **won't auto-update** when the original repository changes.  
+> For production use with automatic updates, use the [GitHub integration method](#-recommended-deployment-automatic-updates) above.
 
-#### Required Variables
-```bash
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_KEY=your-service-role-key
-JWT_SECRET=your-random-secret-key
-```
+**Use this for**:
+- Quick demos
+- Testing the platform
+- Evaluation purposes
 
-See [complete environment variables guide](#-complete-environment-variables-guide) below.
+**Don't use this for**:
+- Production deployments
+- Long-term projects
+- Projects you want to customize
+
+---
+
+## 🗄️ Database Setup
+
+Before your Vercel deployment works, you need to set up the database.
+
+### **Supabase Setup** (Recommended - 5 minutes)
+
+#### Step 1: Create Supabase Project
+
+1. Go to [supabase.com](https://supabase.com) and sign in
+2. Click **"New Project"**
+3. Enter project details:
+   - **Name**: panopticon-engine
+   - **Database Password**: (choose strong password)
+   - **Region**: Select closest to you
+4. Click **"Create new project"**
+5. Wait ~2 minutes for provisioning
+
+#### Step 2: Run Database Migration
+
+1. In your Supabase project, go to **SQL Editor** (left sidebar)
+2. Click **"New Query"**
+3. Open `migrations/20260305_add_panopticon_engine_tables.sql` from this repository
+4. Copy the entire content
+5. Paste into the SQL editor
+6. Click **"Run"** (or press Cmd/Ctrl + Enter)
+7. You should see "Success. No rows returned" ✅
+
+#### Step 3: Get Connection Credentials
+
+1. In Supabase, go to **Settings** → **API**
+2. Find the "Project API keys" section
+3. Copy these values:
+   - **URL** → Use for `SUPABASE_URL`
+   - **anon/public** key → Use for `SUPABASE_ANON_KEY`
+   - **service_role** key → Use for `SUPABASE_SERVICE_KEY` ⚠️ Keep secret!
+
+#### Step 4: Add to Vercel Environment Variables
+
+In your Vercel project settings:
+
+1. Go to **Settings** → **Environment Variables**
+2. Add:
+   ```
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_KEY=your-service-key
+   JWT_SECRET=your-random-secret
+   ```
+3. Click **"Save"**
+4. Redeploy (Settings → Deployments → Click "..." → Redeploy)
 
 ---
 
 ## 🔑 Required Environment Variables
 
-### Database Configuration (Required)
+Only **3 variables** are required to get started:
 
-These variables connect the application to your Supabase database:
+### 1. Database Connection (Supabase)
 
-| Variable | Description | Example | Required |
-|----------|-------------|---------|----------|
-| `SUPABASE_URL` | Your Supabase project URL | `https://abc123.supabase.co` | **Yes** |
-| `SUPABASE_ANON_KEY` | Supabase anonymous key | `eyJhbGc...` | **Yes** |
-| `SUPABASE_SERVICE_KEY` | Supabase service role key (secret!) | `eyJhbGc...` | **Yes** |
+| Variable | Where to Find | Example |
+|----------|---------------|---------|
+| `SUPABASE_URL` | Supabase → Settings → API → URL | `https://abc123.supabase.co` |
+| `SUPABASE_SERVICE_KEY` | Supabase → Settings → API → service_role key | `eyJhbGc...` |
 
-**Where to find these**:
-1. Open your Supabase project
-2. Go to **Settings** → **API**
-3. Copy the values from the "Project API keys" section
+### 2. Authentication Secret
 
-### Security Configuration (Required)
+| Variable | How to Generate | Example |
+|----------|-----------------|---------|
+| `JWT_SECRET` | `openssl rand -base64 64` | Any random 64+ char string |
 
-| Variable | Description | How to Generate | Required |
-|----------|-------------|-----------------|----------|
-| `JWT_SECRET` | Secret key for JWT tokens | `openssl rand -base64 64` | **Yes** |
-| `JWT_EXPIRATION` | Token expiration time | `24h` | No (defaults to 24h) |
-
-### Application Configuration (Optional)
-
-| Variable | Description | Default | Required |
-|----------|-------------|---------|----------|
-| `NODE_ENV` | Environment mode | `production` | No |
-| `PORT` | API server port | `3001` | No |
-| `NEXT_PUBLIC_API_URL` | API base URL for frontend | `http://localhost:3001` | No |
-| `NEXT_PUBLIC_WS_URL` | WebSocket server URL | `http://localhost:3002` | No |
+That's it! Everything else is optional.
 
 ---
 
-## 🔧 Complete Environment Variables Guide
+## 🎯 Optional Integrations
 
-### For Vercel Deployment
+Add these later to enable additional features:
 
-When deploying to Vercel, configure these in **Settings** → **Environment Variables**:
+<details>
+<summary><b>📧 Email Notifications</b> (Click to expand)</summary>
 
-#### 1. **Database (REQUIRED)** 🔴
-```bash
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-```
-
-**Get these from**: Supabase Project → Settings → API
-
----
-
-#### 2. **Authentication (REQUIRED)** 🔴
-```bash
-JWT_SECRET=your-super-secret-key-change-this
-```
-
-**Generate with**:
-```bash
-openssl rand -base64 64
-```
-
-Or use any random 64+ character string.
-
----
-
-#### 3. **Email Notifications (OPTIONAL)** 🟡
-
-If you want email alerts:
+Enable email alerts for critical events:
 
 ```bash
 EMAIL_ENABLED=true
@@ -129,17 +190,19 @@ EMAIL_FROM=panopticon@example.com
 ALERT_EMAIL_TO=admin@example.com
 ```
 
-**For Gmail**:
-1. Enable 2-Factor Authentication
-2. Go to Account → Security → App Passwords
-3. Generate new app password
-4. Use that password (not your regular password)
+**Gmail Setup**:
+1. Go to Google Account → Security
+2. Enable 2-Factor Authentication
+3. Go to Security → App Passwords
+4. Generate new app password
+5. Use that password (not your regular password)
 
----
+</details>
 
-#### 4. **Telegram Notifications (OPTIONAL)** 🟡
+<details>
+<summary><b>💬 Telegram Bot Notifications</b> (Click to expand)</summary>
 
-If you want Telegram alerts:
+Get instant alerts via Telegram:
 
 ```bash
 TELEGRAM_ENABLED=true
@@ -151,40 +214,43 @@ TELEGRAM_CHAT_ID=123456789
 1. Message [@BotFather](https://t.me/BotFather) on Telegram
 2. Send `/newbot` and follow instructions
 3. Copy the bot token
-4. Message your bot, then visit:
-   ```
-   https://api.telegram.org/botYOUR_TOKEN/getUpdates
+4. Message your bot, then get chat ID:
+   ```bash
+   curl https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
    ```
 5. Copy the chat ID from the response
 
----
+</details>
 
-#### 5. **Slack Notifications (OPTIONAL)** 🟡
+<details>
+<summary><b>📱 Slack Integration</b> (Click to expand)</summary>
 
-If you want Slack alerts:
+Send alerts to Slack channels:
 
 ```bash
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXX
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/T00000000/B00000000/XXXX
 ```
 
 **Setup**:
 1. Go to [api.slack.com/apps](https://api.slack.com/apps)
-2. Create new app
-3. Activate Incoming Webhooks
-4. Add webhook to workspace
-5. Copy webhook URL
+2. Create new app → From scratch
+3. Select workspace
+4. Go to Incoming Webhooks → Activate
+5. Add New Webhook to Workspace
+6. Copy webhook URL
 
----
+</details>
 
-#### 6. **Notion Integration (OPTIONAL)** 🟡
+<details>
+<summary><b>📝 Notion Integration</b> (Click to expand)</summary>
 
-If you want automated Notion reports:
+Enable automated report generation:
 
 ```bash
 NOTION_ENABLED=true
-NOTION_API_KEY=secret_aBcDeFgHiJkLmNoPqRsTuVwXyZ123456
-NOTION_DATABASE_ID=a1b2c3d4e5f6g7h8i9j0
-NOTION_PAGE_ID=a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6
+NOTION_API_KEY=secret_aBcDeFgHiJkLmNoPqRsTuVwXyZ
+NOTION_DATABASE_ID=your-database-id
+NOTION_PAGE_ID=your-page-id
 ```
 
 **Setup**:
@@ -192,12 +258,14 @@ NOTION_PAGE_ID=a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6
 2. Create new integration
 3. Copy the Internal Integration Token
 4. Share your Notion pages with the integration
+5. Copy page/database IDs from URLs
 
----
+</details>
 
-#### 7. **Atlas Integration (OPTIONAL)** 🟡
+<details>
+<summary><b>🔗 Atlas Knowledge Graph</b> (Click to expand)</summary>
 
-If you have Atlas knowledge graph:
+Connect to Atlas for knowledge graph sync:
 
 ```bash
 ATLAS_ENABLED=true
@@ -206,93 +274,15 @@ ATLAS_NOTIFICATION_ENDPOINT=https://atlas.example.com/api/notifications
 ATLAS_API_KEY=your-atlas-api-key
 ```
 
----
-
-#### 8. **Advanced Configuration (OPTIONAL)** 🟢
-
-Fine-tune monitoring and performance:
-
-```bash
-# Monitoring
-SCAN_INTERVAL_MS=60000
-ANOMALY_DETECTION_ENABLED=true
-ANOMALY_THRESHOLD_SIGMA=3
-MIN_PATTERN_CONFIDENCE=0.7
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# Logging
-LOG_LEVEL=info
-
-# Cleanup
-RETENTION_DAYS=90
-```
+</details>
 
 ---
 
-## 🗄️ Database Setup
+## 🏁 Alternative Deployment Options
 
-### Option 1: Supabase (Recommended - Easiest)
+### Option 1: Docker Compose (Self-Hosted)
 
-1. **Create Supabase Project**:
-   - Go to [supabase.com](https://supabase.com)
-   - Click "New Project"
-   - Choose region closest to you
-   - Wait for project creation (~2 min)
-
-2. **Run Migration**:
-   - Go to **SQL Editor** in your Supabase dashboard
-   - Click "New Query"
-   - Copy contents from `migrations/20260305_add_panopticon_engine_tables.sql`
-   - Paste and run
-
-3. **Get Connection Details**:
-   - Go to **Settings** → **API**
-   - Copy `URL` (for `SUPABASE_URL`)
-   - Copy `anon/public` key (for `SUPABASE_ANON_KEY`)
-   - Copy `service_role` key (for `SUPABASE_SERVICE_KEY`)
-
-### Option 2: Self-Hosted PostgreSQL
-
-```bash
-# Create database
-createdb panopticon_engine
-
-# Run migration
-psql panopticon_engine -f migrations/20260305_add_panopticon_engine_tables.sql
-
-# Set DATABASE_URL
-export DATABASE_URL=postgresql://user:password@localhost:5432/panopticon_engine
-```
-
----
-
-## 🚀 Deployment Options
-
-### Option 1: Vercel (Frontend) + Railway (Backend) ⭐ **Recommended**
-
-#### Deploy Frontend to Vercel:
-1. Click the deploy button at the top of this README
-2. Connect your GitHub account
-3. Configure environment variables (see above)
-4. Deploy!
-
-#### Deploy Backend to Railway:
-1. Go to [railway.app](https://railway.app)
-2. Click "New Project" → "Deploy from GitHub repo"
-3. Select `panopticon-engine`
-4. Add environment variables
-5. Set start command: `npm run server:start`
-6. Deploy!
-
-**Total Time**: ~10 minutes  
-**Monthly Cost**: ~$20-40 (Vercel Pro + Railway)
-
----
-
-### Option 2: Docker Compose (Full Stack) ⭐ **Best for Self-Hosting**
+Best for running the full stack on your own server:
 
 ```bash
 # 1. Clone repository
@@ -306,47 +296,43 @@ nano .env  # Edit with your values
 # 3. Start all services
 docker-compose up -d
 
-# 4. View logs
-docker-compose logs -f
-
-# 5. Access dashboard
+# 4. Access dashboard
 open http://localhost:3000/dashboard
 ```
 
 **Includes**:
-- ✅ PostgreSQL database
-- ✅ API server
-- ✅ Background jobs
-- ✅ Frontend application
-- ✅ Auto-restart on failure
+- PostgreSQL database
+- API server (port 3001)
+- Background jobs
+- Frontend (port 3000)
+- Auto-restart on failure
 
-**Total Time**: ~5 minutes  
-**Monthly Cost**: Server hosting only (~$20-50)
+**Best for**: Self-hosting, development, full control
 
 ---
 
-### Option 3: PM2 (Production)
+### Option 2: PM2 (VPS Production)
+
+For deploying to your own VPS (AWS EC2, DigitalOcean, etc.):
 
 ```bash
-# 1. Install dependencies
+# 1. Install and build
 npm install
-
-# 2. Build
 npm run build
 npm run server:build
 
-# 3. Start with PM2
+# 2. Start with PM2
 pm2 start ecosystem.config.js
+
+# 3. Enable auto-start on reboot
+pm2 startup
+pm2 save
 
 # 4. Monitor
 pm2 monit
-
-# 5. Set up auto-start
-pm2 startup
-pm2 save
 ```
 
-**Best for**: VPS deployment (AWS EC2, DigitalOcean, Linode)
+**Best for**: AWS, DigitalOcean, Linode, custom VPS
 
 ---
 
@@ -354,20 +340,18 @@ pm2 save
 
 | Document | Description | Lines |
 |----------|-------------|-------|
-| **[Quick Start Guide](#-quick-setup-guide)** | Get running in 5 minutes | - |
-| **[Environment Variables](#-complete-environment-variables-guide)** | All configuration options | - |
+| **[Quick Deploy Guide](#-recommended-deployment-automatic-updates)** | Vercel GitHub integration | - |
+| **[Environment Variables](#-required-environment-variables)** | All configuration options | - |
 | **[Database Setup](#-database-setup)** | Supabase & PostgreSQL | - |
-| [COMPLETE_SYSTEM_OVERVIEW.md](COMPLETE_SYSTEM_OVERVIEW.md) | Full system overview | 600+ |
-| [docs/API.md](docs/API.md) | API reference | 1,500+ |
-| [docs/DASHBOARD.md](docs/DASHBOARD.md) | Dashboard guide | 1,500+ |
+| [COMPLETE_SYSTEM_OVERVIEW.md](COMPLETE_SYSTEM_OVERVIEW.md) | Full system details | 600+ |
+| [docs/API.md](docs/API.md) | Complete API reference | 1,500+ |
+| [docs/DASHBOARD.md](docs/DASHBOARD.md) | Dashboard usage guide | 1,500+ |
 | [docs/REALTIME.md](docs/REALTIME.md) | Real-time features | 1,200+ |
-| [docs/ALERTS.md](docs/ALERTS.md) | Alert system | 1,000+ |
+| [docs/ALERTS.md](docs/ALERTS.md) | Alert system guide | 1,000+ |
 | [docs/INTEGRATIONS.md](docs/INTEGRATIONS.md) | Integration setup | 1,000+ |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Deployment guide | 1,800+ |
+| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Advanced deployment | 1,800+ |
 | [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Issue resolution | 800+ |
-| [database/schema.md](database/schema.md) | Schema docs | 2,000+ |
-
-**Total Documentation**: 12,000+ lines
+| [database/schema.md](database/schema.md) | Schema documentation | 2,000+ |
 
 ---
 
@@ -427,11 +411,13 @@ pm2 save
 - **Database**: PostgreSQL 14+ / Supabase
 - **Integrations**: Notion API, Nodemailer, Telegraf
 - **Analysis**: simple-statistics, Sentiment.js
-- **Deployment**: Docker, PM2, Vercel
+- **Deployment**: Vercel, Docker, PM2
 
 ---
 
-## 🏁 Local Development Setup
+## 🏁 Local Development
+
+For local development and testing:
 
 ### Prerequisites
 
@@ -463,18 +449,9 @@ cp .env.example .env
 createdb panopticon_engine
 psql panopticon_engine -f migrations/20260305_add_panopticon_engine_tables.sql
 
-# 5. Build application
-npm run build
-npm run server:build
-
-# 6. Start services
-npm run server:start  # API server (port 3001)
-npm run jobs:start    # Background jobs
-npm start             # Frontend (port 3000)
-
-# Or use development mode:
-npm run dev           # Frontend with hot reload
-npm run server:dev    # Backend with hot reload
+# 5. Start development servers
+npm run dev           # Frontend (port 3000) with hot reload
+npm run server:dev    # Backend (port 3001) with hot reload
 ```
 
 ### Verify Installation
@@ -483,75 +460,104 @@ npm run server:dev    # Backend with hot reload
 # Check API health
 curl http://localhost:3001/health
 
-# Response: {"status":"healthy","timestamp":"...","version":"0.1.0"}
-
 # Access dashboard
 open http://localhost:3000/dashboard
 ```
 
 ---
 
-## 🔧 Environment Variables Reference
+## 🔧 Environment Variables Guide
 
-### Quick Copy-Paste Templates
+### Required Variables (3 minimum)
 
-#### **Minimal Configuration (Development)**
+These are **absolutely required** for the application to function:
+
+| Variable | Description | Where to Find | Example |
+|----------|-------------|---------------|---------|
+| `SUPABASE_URL` | Your Supabase project URL | Supabase → Settings → API → URL | `https://abc123.supabase.co` |
+| `SUPABASE_SERVICE_KEY` | Service role key (keep secret!) | Supabase → Settings → API → service_role | `eyJhbGc...` |
+| `JWT_SECRET` | Secret for JWT token signing | Generate with `openssl rand -base64 64` | Random 64+ chars |
+
+### Optional Variables (Add as needed)
+
+#### Application Settings
 ```bash
-# Database
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_KEY=your-service-key
-
-# Security
-JWT_SECRET=generate-with-openssl-rand-base64-64
-
-# Basic settings
-NODE_ENV=development
+NODE_ENV=production
 PORT=3001
+NEXT_PUBLIC_API_URL=https://your-api.vercel.app
+NEXT_PUBLIC_WS_URL=https://your-ws.vercel.app
 ```
 
-#### **Full Configuration (Production)**
+#### Email Notifications
+```bash
+EMAIL_ENABLED=true
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASSWORD=your-gmail-app-password
+EMAIL_FROM=panopticon@example.com
+ALERT_EMAIL_TO=admin@example.com
+```
 
-See `.env.example` or `.env.production` for complete configuration with all optional integrations.
+#### Telegram Bot
+```bash
+TELEGRAM_ENABLED=true
+TELEGRAM_BOT_TOKEN=123456789:ABCdef...
+TELEGRAM_CHAT_ID=123456789
+```
 
-### Required vs Optional
+#### Slack Webhooks
+```bash
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+```
 
-**🔴 Required (3 variables)**:
-- `SUPABASE_URL` - Your Supabase project URL
-- `SUPABASE_SERVICE_KEY` - Service role key from Supabase
-- `JWT_SECRET` - Secret for JWT token signing
+#### Notion Integration
+```bash
+NOTION_ENABLED=true
+NOTION_API_KEY=secret_...
+NOTION_DATABASE_ID=...
+NOTION_PAGE_ID=...
+```
 
-**🟡 Optional but Recommended**:
-- Email configuration (for alerts)
-- Monitoring configuration (intervals, thresholds)
+#### Atlas Knowledge Graph
+```bash
+ATLAS_ENABLED=true
+ATLAS_DB_CONNECTION=postgresql://...
+ATLAS_NOTIFICATION_ENDPOINT=https://...
+ATLAS_API_KEY=...
+```
 
-**🟢 Fully Optional**:
-- Telegram, Slack integrations
-- Notion integration
-- Atlas integration
-- Advanced tuning parameters
+#### Monitoring Configuration
+```bash
+SCAN_INTERVAL_MS=60000
+ANOMALY_DETECTION_ENABLED=true
+ANOMALY_THRESHOLD_SIGMA=3
+MIN_PATTERN_CONFIDENCE=0.7
+```
+
+See [.env.example](.env.example) or [.env.production](.env.production) for complete configuration templates.
 
 ---
 
 ## 📊 What You Get
 
 ### Complete Surveillance Platform
-- ✅ Real-time data ingestion
-- ✅ Anomaly detection (3 statistical methods)
+- ✅ Real-time data ingestion from multiple sources
+- ✅ Anomaly detection using 3 statistical methods
 - ✅ Pattern recognition (sequential, frequency, correlation)
 - ✅ Temporal forecasting with confidence intervals
 - ✅ Entity relationship mapping
-- ✅ Multi-channel alerting
-- ✅ Interactive dashboard
+- ✅ Multi-channel alerting (Email, Telegram, Slack)
+- ✅ Interactive cyberpunk-themed dashboard
 - ✅ WebSocket real-time updates
 
 ### Production-Ready Features
 - ✅ JWT authentication + RBAC
-- ✅ Rate limiting (100 req/15min)
+- ✅ Rate limiting (100 req/15min, configurable)
 - ✅ Security headers (Helmet)
 - ✅ Input validation (Zod)
 - ✅ Comprehensive logging (Winston)
-- ✅ Error handling
+- ✅ Error handling and recovery
 - ✅ Health checks
 - ✅ Graceful shutdown
 - ✅ Auto-healing database
@@ -596,20 +602,34 @@ Customer behavior, usage patterns, trend analysis, predictive analytics
 
 ---
 
-## 🎨 Dashboard Preview
+## 🎨 Dashboard Features
 
-The dashboard features:
-- **Cyberpunk Theme**: Dark UI with neon accents (cyan, purple, pink)
-- **Real-Time Charts**: Live updating visualizations
-- **Interactive Graphs**: Hover, zoom, filter capabilities
-- **Alert Notifications**: Toast popups for new alerts
-- **Responsive Design**: Mobile, tablet, desktop optimized
+The dashboard provides:
 
-### Available Pages
-- **Overview** (`/dashboard`) - System metrics, alerts, patterns
-- **Anomalies** (`/dashboard/anomalies`) - Detection and analysis
-- **Patterns** (`/dashboard/patterns`) - Pattern discovery
-- **Alerts** (`/dashboard/alerts`) - Alert management
+### **Pages**
+- **Overview** (`/dashboard`) - System metrics, real-time charts, alerts
+- **Anomalies** (`/dashboard/anomalies`) - Anomaly detection and analysis
+- **Patterns** (`/dashboard/patterns`) - Pattern discovery and tracking
+- **Alerts** (`/dashboard/alerts`) - Alert management interface
+
+### **Visualizations**
+- Real-time area charts (24h time-series)
+- Anomaly scatter plots (expected vs actual)
+- Pattern bar charts (color-coded by type)
+- Timeline view (chronological events)
+- Live metrics cards (KPIs)
+
+### **Real-Time Updates**
+- WebSocket connections
+- Toast notifications
+- Live charts updating every 5s
+- Instant alert popups
+
+### **Theme**
+- Cyberpunk dark mode
+- Neon accents (cyan #00f3ff, purple #9d00ff, pink #ff00ea)
+- Glass morphism effects
+- Smooth animations
 
 ---
 
@@ -641,32 +661,35 @@ npm run test:watch
 npm run test:coverage
 ```
 
-**Coverage**: 75% (lines, functions, branches)
+**Current Coverage**: 75%
 
 ---
 
-## 📝 Available Scripts
+## 📝 API Endpoints
 
-```bash
-# Development
-npm run dev              # Next.js dev server
-npm run server:dev       # API server (hot reload)
+### Ingestion
+- `POST /api/ingest/observation` - Ingest single observation
+- `POST /api/ingest/batch` - Batch ingestion
+- `POST /api/ingest/metric` - Ingest metric
 
-# Production
-npm run build            # Build frontend
-npm run server:build     # Build backend
-npm start                # Start frontend
-npm run server:start     # Start API
-npm run jobs:start       # Start job scheduler
+### Analysis
+- `GET /api/analysis/trends/:metric` - Trend analysis
+- `GET /api/analysis/patterns` - Active patterns
+- `GET /api/analysis/insights` - AI insights
+- `GET /api/analysis/alerts` - Active alerts
+- `PUT /api/analysis/alerts/:id` - Update alert
 
-# Testing
-npm test                 # Run tests
-npm run test:watch       # Watch mode
-npm run test:coverage    # Coverage report
+### Webhooks
+- `POST /api/webhooks/github` - GitHub events
+- `POST /api/webhooks/slack` - Slack events
+- `POST /api/webhooks/generic` - Custom webhooks
 
-# Linting
-npm run lint             # ESLint
-```
+### Admin
+- `GET /api/admin/stats` - System statistics
+- `POST /api/admin/cleanup` - Trigger cleanup
+- `GET /api/admin/sources` - List data sources
+
+See [docs/API.md](docs/API.md) for complete reference with examples.
 
 ---
 
@@ -681,7 +704,7 @@ curl -X POST http://localhost:3001/api/ingest/observation \
   -d '{
     "observation_type": "api_error",
     "severity": "high",
-    "payload": {"error_code": 500}
+    "payload": {"error_code": 500, "endpoint": "/api/users"}
   }'
 
 # Ingest metric
@@ -694,47 +717,39 @@ curl -X POST http://localhost:3001/api/ingest/metric \
   }'
 ```
 
-### Query Analysis
+### View in Dashboard
 
-```bash
-# Get trends
-curl http://localhost:3001/api/analysis/trends/api.response_time?timeRange=day
-
-# Get patterns
-curl http://localhost:3001/api/analysis/patterns
-
-# Get alerts
-curl http://localhost:3001/api/analysis/alerts?status=open
-```
+1. Go to `https://your-app.vercel.app/dashboard`
+2. See real-time charts update
+3. Anomaly detection runs automatically
+4. Alerts trigger if thresholds exceeded
+5. Receive notifications via configured channels
 
 ---
 
 ## 🗺️ Roadmap
 
-### ✅ Completed (v0.1.0)
+### ✅ Completed (v0.1.0) - **Production Ready**
 - [x] Core backend infrastructure
 - [x] REST API with authentication
 - [x] Anomaly detection (3 methods)
 - [x] Pattern recognition
 - [x] Real-time WebSocket features
 - [x] Dashboard UI with visualizations
-- [x] Multi-system integrations
+- [x] Multi-system integrations (5)
 - [x] Alert system
 - [x] Background job processing
 - [x] Comprehensive documentation
 
-### 🚧 In Progress
-- [ ] Settings page UI
-- [ ] Advanced relationship graph
-- [ ] Additional dashboard pages
-
 ### 📋 Planned (v0.2.0)
+- [ ] Settings page UI
+- [ ] Advanced relationship graph visualization
 - [ ] Machine learning integration
-- [ ] Custom dashboard builder
 - [ ] Mobile application
 - [ ] GraphQL API
-- [ ] Multi-tenancy UI
+- [ ] Custom dashboard builder
 - [ ] Report export (PDF, CSV)
+- [ ] Multi-tenancy UI
 
 ---
 
@@ -760,10 +775,11 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 - [Next.js](https://nextjs.org/) - React framework
 - [PostgreSQL](https://www.postgresql.org/) - Database
+- [Supabase](https://supabase.com/) - Database platform
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [Recharts](https://recharts.org/) - Charts
 - [Socket.io](https://socket.io/) - Real-time
-- [Notion API](https://developers.notion.com/) - Integration
+- [Vercel](https://vercel.com/) - Deployment platform
 
 ---
 
@@ -771,7 +787,7 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 - **GitHub Issues**: [Report bugs or request features](https://github.com/iacosta3994/panopticon-engine/issues)
 - **Documentation**: See `/docs` directory for detailed guides
-- **Examples**: Throughout documentation and code comments
+- **Troubleshooting**: [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 
 ---
 
@@ -788,6 +804,19 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ---
 
+## 💡 Deployment Comparison
+
+| Method | Updates | Setup Time | Cost | Best For |
+|--------|---------|------------|------|----------|
+| **Vercel GitHub** ⭐ | Automatic | 5 min | Free-$20/mo | Production |
+| Quick Deploy | Manual | 2 min | Free-$20/mo | Testing |
+| Docker Compose | Manual | 5 min | Server cost | Self-hosting |
+| PM2 | Manual | 10 min | Server cost | VPS |
+
+**Recommendation**: Use **Vercel GitHub integration** for automatic updates and hassle-free deployments.
+
+---
+
 **Panopticon Engine** - *Seeing everything, understanding everything.*
 
 🔍 **Vigilance** • 🧠 **Intelligence** • ⚡ **Speed** • 🔒 **Security**
@@ -797,3 +826,11 @@ Built with ❤️ by [Ian Acosta](https://github.com/iacosta3994)
 **Repository**: https://github.com/iacosta3994/panopticon-engine  
 **Version**: 0.1.0  
 **Status**: Production Ready ✅
+
+---
+
+## ⭐ Show Your Support
+
+If you find this project useful:
+
+[![GitHub stars](https://img.shields.io/github/stars/iacosta3994/panopticon-engine?style=social)](https://github.com/iacosta3994/panopticon-engine)
