@@ -1,6 +1,6 @@
 # Panopticon Engine
 
-> An intelligent surveillance and analysis platform with real-time monitoring, anomaly detection, and pattern recognition. Deploy in 5 minutes with Supabase + Vercel.
+> An intelligent surveillance and analysis platform with real-time monitoring, anomaly detection, and pattern recognition. Deploy in 10 minutes with Supabase + Vercel.
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue)
 ![Status](https://img.shields.io/badge/status-production--ready-green)
@@ -8,62 +8,17 @@
 
 ---
 
-## 🚀 Quick Deploy (5 Minutes)
+## 🚀 Quick Deploy
 
-### Step 1: Create Supabase Project (2 minutes)
+**→ See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) for complete step-by-step instructions**
 
-1. Go to [supabase.com](https://supabase.com) and sign in
-2. Click **"New Project"**
-3. Enter project name and password
-4. Wait for project creation (~2 min)
+### Summary (10 Minutes)
 
-### Step 2: Run Database Migration (1 minute)
+1. **Create Supabase project** → Run migration SQL
+2. **Deploy to Vercel** → Set 4 environment variables
+3. **Access dashboard** → Done!
 
-1. In Supabase, go to **SQL Editor** (left sidebar)
-2. Click **"New Query"**
-3. Copy the entire contents of `migrations/20260305_add_panopticon_engine_tables.sql` from this repo
-4. Paste into SQL editor
-5. Click **"Run"** (or Cmd/Ctrl + Enter)
-6. You should see "Success. No rows returned" ✅
-
-### Step 3: Get Supabase Credentials (30 seconds)
-
-1. In Supabase, go to **Settings** → **API**
-2. Copy these three values:
-   - **URL** (e.g., `https://abc123.supabase.co`)
-   - **anon/public** key
-   - **service_role** key (⚠️ Keep this secret!)
-
-### Step 4: Deploy to Vercel (1 minute)
-
-1. Fork this repository (click Fork button above)
-2. Go to [vercel.com](https://vercel.com) and sign in with GitHub
-3. Click **"Add New..."** → **"Project"**
-4. Import `panopticon-engine` from your repos
-5. Add **4 environment variables**:
-   ```
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_KEY=your-service-key
-   JWT_SECRET=any-random-string
-   ```
-6. Click **"Deploy"**
-
-### Step 5: Access Dashboard (30 seconds)
-
-Visit: `https://your-app.vercel.app/dashboard`
-
-✅ **You're done!** The system is live with automatic updates.
-
----
-
-## 🔄 Automatic Updates
-
-**Every time you push to GitHub**:
-- ✅ Vercel automatically rebuilds and deploys
-- ✅ New version live in ~2 minutes
-- ✅ Preview deployments for pull requests
-- ✅ One-click rollback if needed
+**No complex secret management. No confusing configurations. Just simple deployment.**
 
 ---
 
@@ -84,14 +39,20 @@ A complete surveillance platform with:
 
 ## 🔑 Environment Variables
 
+**All variables use lowercase for consistency and simplicity.**
+
 ### Required (4 variables)
 
-| Variable | Where to Get | Example |
-|----------|--------------|---------|
-| `SUPABASE_URL` | Supabase → Settings → API | `https://abc.supabase.co` |
-| `SUPABASE_ANON_KEY` | Supabase → Settings → API | `eyJhbGc...` |
-| `SUPABASE_SERVICE_KEY` | Supabase → Settings → API | `eyJhbGc...` |
-| `JWT_SECRET` | Generate: `openssl rand -base64 32` | Any random string |
+```bash
+supabase_url=https://your-project.supabase.co
+supabase_anon_key=your-anon-key-here
+supabase_service_key=your-service-role-key-here
+jwt_secret=your-random-32-char-string
+```
+
+Get Supabase credentials from: **Settings → API** in your Supabase project
+
+Generate `jwt_secret` with: `openssl rand -base64 32`
 
 ### Optional Integrations
 
@@ -101,10 +62,10 @@ A complete surveillance platform with:
 Add to enable email notifications:
 
 ```bash
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-gmail-app-password
-SMTP_HOST=smtp.gmail.com
-EMAIL_FROM=panopticon@example.com
+smtp_user=your-email@gmail.com
+smtp_password=your-gmail-app-password
+smtp_host=smtp.gmail.com
+email_from=panopticon@example.com
 ```
 
 **Gmail Setup**: Enable 2FA → Generate App Password → Use that password
@@ -115,8 +76,8 @@ EMAIL_FROM=panopticon@example.com
 <summary><b>💬 Telegram Alerts</b> (Click to expand)</summary>
 
 ```bash
-TELEGRAM_BOT_TOKEN=123456789:ABCdef...
-TELEGRAM_CHAT_ID=123456789
+telegram_bot_token=123456789:ABCdef...
+telegram_chat_id=123456789
 ```
 
 **Setup**: Message [@BotFather](https://t.me/BotFather) → Create bot → Get token
@@ -127,10 +88,30 @@ TELEGRAM_CHAT_ID=123456789
 <summary><b>📱 Slack Alerts</b> (Click to expand)</summary>
 
 ```bash
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+slack_webhook_url=https://hooks.slack.com/services/...
 ```
 
 **Setup**: [Create incoming webhook](https://api.slack.com/messaging/webhooks)
+
+</details>
+
+<details>
+<summary><b>📓 Notion Integration</b> (Click to expand)</summary>
+
+```bash
+notion_api_key=your-notion-api-key
+notion_database_id=your-database-id
+```
+
+</details>
+
+<details>
+<summary><b>🗺️ Atlas Integration</b> (Click to expand)</summary>
+
+```bash
+atlas_db_connection=your-connection-string
+atlas_api_key=your-api-key
+```
 
 </details>
 
@@ -140,7 +121,7 @@ SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
 
 ## 📊 Features
 
-### Core Capabilities (No Configuration Needed)
+### Core Capabilities (Zero Configuration)
 
 ✅ **Anomaly Detection** - Statistical outlier detection  
 ✅ **Pattern Recognition** - Behavioral pattern discovery  
@@ -189,8 +170,8 @@ Go to: `https://your-app.vercel.app/dashboard`
 ## 🏁 Local Development
 
 ```bash
-# 1. Clone your fork
-git clone https://github.com/YOUR_USERNAME/panopticon-engine.git
+# 1. Clone repository
+git clone https://github.com/iacosta3994/panopticon-engine.git
 cd panopticon-engine
 
 # 2. Install dependencies
@@ -200,8 +181,9 @@ npm install
 cp .env.example .env
 
 # 4. Add your Supabase credentials to .env
+# Edit .env with your supabase_url, supabase_anon_key, supabase_service_key, jwt_secret
 
-# 5. Start development
+# 5. Start development server
 npm run dev
 
 # Access at http://localhost:3000/dashboard
@@ -209,11 +191,22 @@ npm run dev
 
 ---
 
+## 🔄 Automatic Updates
+
+**Every time you push to GitHub**:
+- ✅ Vercel automatically rebuilds and deploys
+- ✅ New version live in ~2 minutes
+- ✅ Preview deployments for pull requests
+- ✅ One-click rollback if needed
+
+---
+
 ## 📖 Documentation
 
 | Document | What's Inside |
 |----------|---------------|
-| **[QUICKSTART.md](QUICKSTART.md)** | Fastest path to deployment |
+| **[VERCEL_DEPLOY.md](VERCEL_DEPLOY.md)** | ⭐ Simple deployment guide |
+| [QUICKSTART.md](QUICKSTART.md) | Quick reference |
 | [API Reference](docs/API.md) | All API endpoints |
 | [Dashboard Guide](docs/DASHBOARD.md) | Dashboard usage |
 | [Integrations](docs/INTEGRATIONS.md) | Optional integrations |
@@ -253,6 +246,18 @@ All enabled by default!
 
 ---
 
+## 🆘 Troubleshooting
+
+See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md#troubleshooting) for common issues and solutions.
+
+**Most Common Issues**:
+- ✓ Use **lowercase** variable names: `supabase_url` not `SUPABASE_URL`
+- ✓ Set variables in **Vercel dashboard**, not vercel.json
+- ✓ Use **service_role** key, not anon key for `supabase_service_key`
+- ✓ Redeploy after changing environment variables
+
+---
+
 ## 🤝 Contributing
 
 1. Fork the repository
@@ -271,6 +276,7 @@ MIT License - See [LICENSE](LICENSE)
 ## 🌟 Why Panopticon Engine?
 
 ✅ **Simple Setup** - Just Supabase + Vercel  
+✅ **No Secret Management Complexity** - Direct env vars  
 ✅ **Automatic Updates** - Push to deploy  
 ✅ **Production Ready** - Enterprise features included  
 ✅ **Smart Defaults** - Minimal configuration  
@@ -279,7 +285,7 @@ MIT License - See [LICENSE](LICENSE)
 
 ---
 
-**Panopticon Engine** - *5-minute setup. Monitor everything.*
+**Panopticon Engine** - *Simple deployment. Monitor everything.*
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fiacosta3994%2Fpanopticon-engine)
 
