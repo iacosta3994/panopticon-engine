@@ -1,133 +1,144 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { FiAlertTriangle, FiCheck, FiX } from 'react-icons/fi';
+import { useRealTimeAlerts } from '@/hooks/useRealTimeAlerts';
+import toast from 'react-hot-toast';
 
 interface Alert {
   id: string;
   title: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  severity: string;
   status: string;
-  triggeredAt: Date;
+  triggered_at: string;
+  message?: string;
 }
 
 const AlertsPanel = () => {
-  const [alerts, setAlerts] = useState<Alert[]>([]);
+  const { alerts, unreadCount, markAllAsRead, isConnected } = useRealTimeAlerts();
+  const [selectedSeverity, setSelectedSeverity] = useState<string>('all');
 
-  useEffect(() => {
-    const fetchAlerts = async () => {
-      try {
-        const response = await fetch('http://localhost:3001/api/analysis/alerts?status=open');
-        if (response.ok) {
-          const data = await response.json();
-          setAlerts(data.alerts.slice(0, 10));
-        }
-      } catch (error) {
-        setAlerts(generateMockAlerts());
-      }
+  const filteredAlerts = selectedSeverity === 'all'
+    ? alerts
+    : alerts.filter(a => a.severity === selectedSeverity);
+
+  const getSeverityColor = (severity: string) => {
+    const colors: Record<string, string> = {
+      critical: 'border-red-500 bg-red-500/10',
+      high: 'border-orange-500 bg-orange-500/10',
+      medium: 'border-yellow-500 bg-yellow-500/10',
+      low: 'border-blue-500 bg-blue-500/10',
+      info: 'border-slate-500 bg-slate-500/10',
     };
-
-    fetchAlerts();
-    const interval = setInterval(fetchAlerts, 15000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const generateMockAlerts = (): Alert[] => {
-    return [
-      {
-        id: '1',
-        title: 'High Error Rate Detected',
-        severity: 'critical',
-        status: 'open',
-        triggeredAt: new Date(Date.now() - 300000),
-      },
-      {
-        id: '2',
-        title: 'Unusual API Latency',
-        severity: 'high',
-        status: 'open',
-        triggeredAt: new Date(Date.now() - 900000),
-      },
-      {
-        id: '3',
-        title: 'Memory Usage Threshold',
-        severity: 'medium',
-        status: 'open',
-        triggeredAt: new Date(Date.now() - 1800000),
-      },
-    ];
+    return colors[severity] || colors.info;
   };
 
-  const severityColors = {
-    critical: { bg: 'bg-red-500/20', border: 'border-red-500/50', text: 'text-red-400', dot: 'bg-red-500' },
-    high: { bg: 'bg-orange-500/20', border: 'border-orange-500/50', text: 'text-orange-400', dot: 'bg-orange-500' },
-    medium: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/50', text: 'text-yellow-400', dot: 'bg-yellow-500' },
-    low: { bg: 'bg-blue-500/20', border: 'border-blue-500/50', text: 'text-blue-400', dot: 'bg-blue-500' },
+  const handleAcknowledge = async (alertId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/analysis/alerts/${alertId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'acknowledged', acknowledged_by: 'admin' }),
+      });
+
+      if (response.ok) {
+        toast.success('Alert acknowledged');
+      }
+    } catch (error) {
+      toast.error('Failed to acknowledge alert');
+    }
   };
 
   return (
-    <div className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-6">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.1 }}
+      className="bg-slate-900/50 backdrop-blur border border-slate-800 rounded-xl p-6 flex flex-col h-full"
+    >
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-600 rounded-lg flex items-center justify-center">
-            <FiAlertCircle className="w-5 h-5" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-white">Active Alerts</h2>
-            <p className="text-xs text-slate-400">Requires attention</p>
-          </div>
+        <div>
+          <h2 className="text-xl font-bold">Active Alerts</h2>
+          <p className="text-sm text-slate-400 mt-1">Requires attention</p>
         </div>
-        <button className="px-3 py-1 text-xs bg-cyan-500/20 border border-cyan-500/30 rounded-md text-cyan-400 hover:bg-cyan-500/30 transition-colors">
-          View All
-        </button>
+        {unreadCount > 0 && (
+          <button
+            onClick={markAllAsRead}
+            className="text-xs bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 px-3 py-1 rounded-lg transition-colors"
+          >
+            Mark {unreadCount} as read
+          </button>
+        )}
       </div>
 
-      <div className="space-y-3 max-h-96 overflow-y-auto">
-        {alerts.map((alert) => {
-          const colors = severityColors[alert.severity];
-          
-          return (
-            <div
+      {/* Severity Filter */}
+      <div className="flex space-x-2 mb-4">
+        {['all', 'critical', 'high', 'medium', 'low'].map((severity) => (
+          <button
+            key={severity}
+            onClick={() => setSelectedSeverity(severity)}
+            className={`px-3 py-1 rounded-lg text-xs transition-all ${
+              selectedSeverity === severity
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/50'
+                : 'bg-slate-800/50 text-slate-400 hover:bg-slate-800'
+            }`}
+          >
+            {severity.charAt(0).toUpperCase() + severity.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Alerts List */}
+      <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+        {filteredAlerts.length === 0 ? (
+          <div className="text-sm text-slate-500 text-center py-8">
+            No {selectedSeverity !== 'all' ? selectedSeverity : ''} alerts
+          </div>
+        ) : (
+          filteredAlerts.slice(0, 10).map((alert) => (
+            <motion.div
               key={alert.id}
-              className={`p-4 ${colors.bg} border ${colors.border} rounded-lg hover:shadow-lg transition-all cursor-pointer`}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className={`p-4 rounded-lg border ${getSeverityColor(alert.severity)} hover:shadow-lg transition-all`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center space-x-2">
-                  <span className={`w-2 h-2 ${colors.dot} rounded-full animate-pulse`}></span>
-                  <span className={`text-xs font-semibold ${colors.text} uppercase`}>
-                    {alert.severity}
-                  </span>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <FiAlertTriangle className="w-4 h-4 text-yellow-400" />
+                    <span className="font-semibold text-sm">{alert.title}</span>
+                  </div>
+                  {alert.message && (
+                    <p className="text-xs text-slate-400 mb-2">{alert.message}</p>
+                  )}
+                  <div className="flex items-center space-x-4 text-xs text-slate-500">
+                    <span>{new Date(alert.triggered_at).toLocaleString()}</span>
+                    <span className="px-2 py-0.5 bg-slate-800 rounded">{alert.severity}</span>
+                  </div>
                 </div>
-                <span className="text-xs text-slate-400 flex items-center space-x-1">
-                  <FiClock className="w-3 h-3" />
-                  <span>{getTimeAgo(alert.triggeredAt)}</span>
-                </span>
+                <div className="flex space-x-1 ml-2">
+                  <button
+                    onClick={() => handleAcknowledge(alert.id)}
+                    className="p-1.5 hover:bg-green-500/20 rounded transition-colors"
+                    title="Acknowledge"
+                  >
+                    <FiCheck className="w-4 h-4 text-green-400" />
+                  </button>
+                  <button
+                    className="p-1.5 hover:bg-red-500/20 rounded transition-colors"
+                    title="Dismiss"
+                  >
+                    <FiX className="w-4 h-4 text-red-400" />
+                  </button>
+                </div>
               </div>
-              <h3 className="text-sm font-medium text-white">{alert.title}</h3>
-            </div>
-          );
-        })}
+            </motion.div>
+          ))
+        )}
       </div>
-
-      {alerts.length === 0 && (
-        <div className="text-center py-12 text-slate-500">
-          <FiCheckCircle className="w-12 h-12 mx-auto mb-3 text-green-500 opacity-50" />
-          <p>No active alerts</p>
-          <p className="text-xs mt-1">All systems operational</p>
-        </div>
-      )}
-    </div>
+    </motion.div>
   );
 };
-
-function getTimeAgo(date: Date): string {
-  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
-  
-  if (seconds < 60) return `${seconds}s ago`;
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
-}
 
 export default AlertsPanel;
