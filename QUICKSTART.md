@@ -1,6 +1,8 @@
 # Panopticon Engine - Quick Start Guide
 
-## 🚀 Deploy in 5 Minutes
+## 🚀 Deploy in 10 Minutes
+
+**→ For detailed step-by-step instructions, see [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md)**
 
 ### Prerequisites
 - GitHub account (free)
@@ -11,7 +13,7 @@
 
 ## 📝 Step-by-Step
 
-### Step 1: Set Up Supabase (2 minutes)
+### Step 1: Set Up Supabase (5 minutes)
 
 #### 1.1 Create Project
 1. Go to [supabase.com](https://supabase.com)
@@ -44,36 +46,33 @@
 
 ### Step 2: Deploy to Vercel (3 minutes)
 
-#### 2.1 Fork Repository
-1. Go to [github.com/iacosta3994/panopticon-engine](https://github.com/iacosta3994/panopticon-engine)
-2. Click **Fork** button (top right)
-3. Wait for fork to complete
-
-#### 2.2 Import to Vercel
+#### 2.1 Import Project
 1. Go to [vercel.com](https://vercel.com)
 2. Sign in with GitHub
 3. Click **"Add New..."** → **"Project"**
 4. Find **panopticon-engine** in your repos
 5. Click **"Import"**
 
-#### 2.3 Configure Environment Variables
+#### 2.2 Configure Environment Variables
 
-In the "Configure Project" screen, add these **4 variables**:
+Add these **4 variables** (use lowercase names):
 
 ```
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=eyJhbGc...
-SUPABASE_SERVICE_KEY=eyJhbGc...
-JWT_SECRET=your-random-secret
+supabase_url=https://your-project.supabase.co
+supabase_anon_key=eyJhbGc...
+supabase_service_key=eyJhbGc...
+jwt_secret=your-random-secret
 ```
 
-**For JWT_SECRET**, generate with:
+**For jwt_secret**, generate with:
 ```bash
 openssl rand -base64 32
 ```
-Or just use any random string (20+ characters)
+Or just use any random string (32+ characters)
 
-#### 2.4 Deploy
+**Important**: Use lowercase variable names as shown above!
+
+#### 2.3 Deploy
 
 1. Click **"Deploy"**
 2. Wait ~2 minutes for build ⏳
@@ -110,19 +109,21 @@ Want extra features? Add more environment variables in Vercel:
 
 ### Email Alerts
 ```
-SMTP_USER=your-email@gmail.com
-SMTP_PASSWORD=your-gmail-app-password
+smtp_user=your-email@gmail.com
+smtp_password=your-gmail-app-password
+smtp_host=smtp.gmail.com
+email_from=panopticon@example.com
 ```
 
 ### Telegram Bot
 ```
-TELEGRAM_BOT_TOKEN=your-bot-token
-TELEGRAM_CHAT_ID=your-chat-id
+telegram_bot_token=your-bot-token
+telegram_chat_id=your-chat-id
 ```
 
 ### Slack Webhooks
 ```
-SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+slack_webhook_url=https://hooks.slack.com/services/...
 ```
 
 **No restart needed** - they activate automatically!
@@ -156,27 +157,40 @@ Go to your dashboard URL and see:
 ## 🔧 Troubleshooting
 
 ### Can't connect to Supabase?
-- Verify SUPABASE_URL is correct (no trailing slash)
-- Check SERVICE_KEY is the service_role key (not anon key)
+- Verify `supabase_url` is correct (no trailing slash)
+- Check `supabase_service_key` is the service_role key (not anon key)
 - Ensure migration ran successfully
+- Variable names must be **lowercase**
 
 ### Dashboard showing errors?
 - Check Vercel logs: Deployments → Click deployment → Function logs
 - Verify all 4 environment variables are set
+- Ensure variable names are lowercase
 - Check Supabase project is active
 
-### Need help?
-- [Open an issue](https://github.com/iacosta3994/panopticon-engine/issues)
-- Check [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
+### Need to change variables?
+1. Vercel Dashboard → Your Project → Settings → Environment Variables
+2. Update values
+3. Go to Deployments → ... menu → Redeploy
 
 ---
 
 ## 📖 Next Steps
 
+- [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md) - Detailed deployment guide
 - [API Reference](docs/API.md) - Learn the API
 - [Dashboard Guide](docs/DASHBOARD.md) - Explore features
 - [Integrations](docs/INTEGRATIONS.md) - Add more integrations
 
 ---
 
-**Questions?** Check [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) or [open an issue](https://github.com/iacosta3994/panopticon-engine/issues)
+## 💡 Key Points
+
+✅ All environment variables use **lowercase** names  
+✅ Set variables in **Vercel dashboard**, not vercel.json  
+✅ Use **service_role** key for `supabase_service_key`  
+✅ Redeploy after changing environment variables  
+
+---
+
+**Questions?** See [VERCEL_DEPLOY.md](VERCEL_DEPLOY.md#troubleshooting) or [open an issue](https://github.com/iacosta3994/panopticon-engine/issues)
