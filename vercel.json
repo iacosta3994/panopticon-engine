@@ -5,12 +5,14 @@
   "framework": "nextjs",
   "regions": ["iad1"],
   "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "SUPABASE_SERVICE_KEY": "@supabase_service_key",
     "JWT_SECRET": "@jwt_secret"
   },
   "build": {
     "env": {
-      "NODE_ENV": "production",
-      "SKIP_ENV_VALIDATION": "true"
+      "NODE_ENV": "production"
     }
   },
   "headers": [

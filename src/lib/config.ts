@@ -1,6 +1,6 @@
 /**
  * Configuration with smart defaults
- * Requires Supabase connection but simplifies other settings
+ * Requires Supabase credentials + JWT secret
  */
 
 export const config = {
@@ -10,17 +10,17 @@ export const config = {
     nodeEnv: process.env.NODE_ENV || 'development',
   },
 
-  // JWT (Required)
-  jwt: {
-    secret: process.env.JWT_SECRET || '',
-    expiresIn: process.env.JWT_EXPIRATION || '24h',
-  },
-
-  // Supabase (Required - Original Architecture)
+  // Supabase (REQUIRED)
   supabase: {
     url: process.env.SUPABASE_URL || '',
     anonKey: process.env.SUPABASE_ANON_KEY || '',
     serviceKey: process.env.SUPABASE_SERVICE_KEY || '',
+  },
+
+  // JWT (REQUIRED)
+  jwt: {
+    secret: process.env.JWT_SECRET || 'dev-secret-CHANGE-IN-PRODUCTION',
+    expiresIn: process.env.JWT_EXPIRATION || '24h',
   },
 
   // Monitoring (Smart Defaults)
@@ -86,6 +86,12 @@ export const config = {
   logging: {
     level: process.env.LOG_LEVEL || 'info',
     filePath: process.env.LOG_FILE_PATH || './logs/panopticon.log',
+  },
+
+  // WebSocket (Smart Defaults)
+  websocket: {
+    enabled: process.env.WEBSOCKET_ENABLED !== 'false',
+    port: parseInt(process.env.WEBSOCKET_PORT || '3002', 10),
   },
 
   // Features (All enabled by default)

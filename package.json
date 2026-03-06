@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "node scripts/setup.js",
+    "postinstall": "node scripts/check-env.js",
     "server:dev": "tsx watch src/api/server.ts",
     "server:build": "tsc -p tsconfig.server.json",
     "server:start": "node dist/api/server.js",
