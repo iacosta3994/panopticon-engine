@@ -1,131 +1,178 @@
-# Deploy Panopticon Engine in 2 Minutes
+# Deployment Guide - Panopticon Engine
 
-## 🚀 Automatic Deployment (Recommended)
+## 🎯 Recommended: Vercel + Supabase
 
-### What You Need
-- GitHub account
-- Vercel account (free)
-- 2 minutes of time
-
-### What You Don't Need
-- ❌ External database
-- ❌ Complex configuration
-- ❌ Multiple environment variables
-- ❌ Docker knowledge
-- ❌ DevOps expertise
+**Time**: 5 minutes  
+**Cost**: Free tier available  
+**Difficulty**: Easy  
 
 ---
 
-## 📝 Step-by-Step Deployment
+## 📝 Complete Deployment Steps
 
-### Step 1: Fork the Repository (30 seconds)
+### Part 1: Supabase Database Setup
 
-1. Go to https://github.com/iacosta3994/panopticon-engine
-2. Click **Fork** button (top right)
-3. Wait for fork to complete
+#### 1.1: Create Supabase Project
+
+1. Visit [supabase.com](https://supabase.com)
+2. Sign in or create account
+3. Click **"New Project"** button
+4. Configure:
+   - **Organization**: Select or create
+   - **Name**: `panopticon-engine`
+   - **Database Password**: Choose strong password (save it!)
+   - **Region**: Select closest to your users
+   - **Pricing**: Free tier is fine for testing
+5. Click **"Create new project"**
+6. Wait ~2 minutes for provisioning
+
+#### 1.2: Run Database Migration
+
+1. In your Supabase project, click **"SQL Editor"** (left sidebar)
+2. Click **"New query"** button
+3. Open the file `migrations/20260305_add_panopticon_engine_tables.sql` from this repository
+4. Copy the **entire content** (it's a long file - ~1000 lines)
+5. Paste into the SQL Editor
+6. Click **"Run"** (or press Cmd/Ctrl + Enter)
+7. Wait ~10 seconds
+8. You should see: **"Success. No rows returned"** ✅
+
+This creates:
+- 15 core tables
+- 50+ indexes
+- 4 materialized views
+- 3 database functions
+- 5 triggers
+
+#### 1.3: Get Database Credentials
+
+1. Go to **Settings** → **API** (left sidebar)
+2. Under "Project URL" section:
+   - Copy the **URL** (like: `https://abc123.supabase.co`)
+   - Save as: `SUPABASE_URL`
+3. Under "Project API keys" section:
+   - Copy the **service_role** key (the longer one)
+   - Save as: `SUPABASE_SERVICE_KEY`
+   - ⚠️ **Keep this secret!** Don't commit to Git
+
+---
+
+### Part 2: Fork Repository
+
+1. Go to [github.com/iacosta3994/panopticon-engine](https://github.com/iacosta3994/panopticon-engine)
+2. Click **"Fork"** button (top right)
+3. Select your GitHub account
+4. Wait for fork to complete (~10 seconds)
 
 **Why fork?**
-- Gets automatic updates when main repo updates
+- Enables automatic updates
 - Lets you customize if needed
-- Enables automatic Vercel deployments
+- Vercel auto-deploys on every push
 
 ---
 
-### Step 2: Deploy to Vercel (1 minute)
+### Part 3: Deploy to Vercel
+
+#### 3.1: Import Project
 
 1. Go to [vercel.com](https://vercel.com)
 2. Sign in with GitHub
 3. Click **"Add New..."** → **"Project"**
-4. Find and click **"Import"** next to `panopticon-engine`
-5. Vercel will detect it's a Next.js app automatically
+4. You'll see a list of your GitHub repositories
+5. Find **`panopticon-engine`**
+6. Click **"Import"**
 
----
+#### 3.2: Configure Project
 
-### Step 3: Add Environment Variable (30 seconds)
+Vercel will auto-detect it's a Next.js project. Just configure environment variables:
 
-In the "Configure Project" screen, add **ONE** environment variable:
+1. Click **"Environment Variables"** section
+2. Add these **3 variables**:
 
-**Name**: `JWT_SECRET`  
-**Value**: Any random string (or generate with `openssl rand -base64 32`)
+**Variable 1**:
+```
+Name: SUPABASE_URL
+Value: https://your-project.supabase.co
+```
+(Paste the URL from Step 1.3)
 
-**Examples of valid JWT secrets**:
-- `my-super-secret-key-12345678`
-- `JKHSd89723hkjdHKJHS89d7h2kj`
-- Any random 20+ character string
+**Variable 2**:
+```
+Name: SUPABASE_SERVICE_KEY  
+Value: your-service-role-key-from-supabase
+```
+(Paste the service_role key from Step 1.3)
 
-**That's the ONLY required variable!**
+**Variable 3**:
+```
+Name: JWT_SECRET
+Value: any-random-32-character-string
+```
 
----
+**Generate JWT_SECRET**:
+```bash
+# On Mac/Linux:
+openssl rand -base64 32
 
-### Step 4: Deploy (30 seconds)
+# Or just use any random string:
+my-super-secret-jwt-key-12345678901234567890
+```
 
-1. Click **"Deploy"**
+#### 3.3: Deploy
+
+1. Click **"Deploy"** button
 2. Wait ~2 minutes while Vercel builds
-3. Click the deployment URL when ready
+3. You'll see progress: Installing → Building → Deploying
+4. When complete, you'll see: **"Congratulations!"** 🎉
+5. Click **"Visit"** button
 
 ---
 
-### Step 5: Access Your Dashboard ✅
+### Part 4: Access Your Dashboard
 
-Visit: `https://your-app-name.vercel.app/dashboard`
+1. Your app is live at: `https://your-app-name.vercel.app`
+2. Go to: `https://your-app-name.vercel.app/dashboard`
+3. You should see:
+   - ✅ Dashboard loading
+   - ✅ Charts rendering
+   - ✅ Real-time updates working
+   - ✅ System status: "All Systems Operational"
 
-You should see:
-- ✅ Live dashboard with charts
-- ✅ Sample data already loaded
-- ✅ All features working
-- ✅ Real-time updates active
-
-**Done!** 🎉
-
----
-
-## 🔄 Automatic Updates
-
-From now on, **every time you push to your GitHub repo**:
-- ✅ Vercel automatically deploys
-- ✅ New version goes live in ~2 minutes
-- ✅ Preview deployments for pull requests
-- ✅ One-click rollback if needed
-
-**No manual deployment ever needed again!**
+**Success!** Your surveillance platform is now live! 🎊
 
 ---
 
-## 🎯 What Works Out of the Box
+## 🔄 Future Updates
 
-### Without ANY Configuration
+**Automatic Deployment**:
+- Push to your GitHub repo
+- Vercel automatically detects changes
+- Builds and deploys in ~2 minutes
+- No manual deployment needed!
 
-- ✅ **Full dashboard** with real-time charts
-- ✅ **Anomaly detection** (3 statistical methods)
-- ✅ **Pattern recognition**
-- ✅ **Temporal forecasting**
-- ✅ **Alert management**
-- ✅ **WebSocket real-time updates**
-- ✅ **API endpoints** (20+)
-- ✅ **Sample data** for testing
-
-### Database
-
-- ✅ **SQLite embedded** - No external database needed
-- ✅ **Auto-created** on first start
-- ✅ **Migrations automatic**
-- ✅ **Sample data seeded**
-- ✅ **Fully functional**
-
-**Upgrade to PostgreSQL later if needed** (just add DATABASE_URL env var)
+**Preview Deployments**:
+- Create pull request
+- Vercel creates preview URL
+- Test changes before merging
+- Merge → Auto-deploys to production
 
 ---
 
-## 🎨 Optional: Add Integrations
-
-Want email/Telegram alerts? Just add more env vars in Vercel:
+## 🔑 Optional: Add Integrations
 
 ### Email Alerts
+
+In Vercel → Settings → Environment Variables, add:
 
 ```
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-gmail-app-password
 ```
+
+**Gmail App Password**:
+1. Google Account → Security
+2. 2-Step Verification → App Passwords
+3. Generate → Copy
 
 ### Telegram Bot
 
@@ -134,142 +181,97 @@ TELEGRAM_BOT_TOKEN=your-bot-token
 TELEGRAM_CHAT_ID=your-chat-id
 ```
 
-**That's it!** No restart needed - they activate automatically.
+**Create Bot**:
+1. Message [@BotFather](https://t.me/BotFather)
+2. Send `/newbot`
+3. Follow instructions
+4. Copy token
+
+**Get Chat ID**:
+```bash
+curl https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates
+```
+
+### Slack Webhooks
+
+```
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/...
+```
+
+**Create Webhook**:
+1. Go to [api.slack.com/apps](https://api.slack.com/apps)
+2. Create New App → From scratch
+3. Incoming Webhooks → Activate
+4. Add New Webhook → Copy URL
 
 ---
 
-## 🏁 Local Development (Optional)
-
-Want to run locally? It's just as easy:
+## 🏁 Alternative: Local Development
 
 ```bash
-# Clone your fork
+# Clone
 git clone https://github.com/YOUR_USERNAME/panopticon-engine.git
 cd panopticon-engine
 
-# Install and auto-setup
+# Install (auto-creates .env)
 npm install
-# (Auto-setup runs, creates .env, database, sample data)
+
+# Add credentials to .env
+nano .env
+# Add your SUPABASE_URL, SUPABASE_SERVICE_KEY, JWT_SECRET
 
 # Start
 npm run dev
-
-# Access at http://localhost:3000/dashboard
 ```
 
-**Everything auto-configures!**
+Access at: `http://localhost:3000/dashboard`
 
 ---
 
-## 📊 What's Included
+## ✅ Deployment Checklist
 
-| Feature | Status | Configuration Needed |
-|---------|--------|---------------------|
-| Dashboard | ✅ Working | None |
-| Anomaly Detection | ✅ Working | None |
-| Pattern Recognition | ✅ Working | None |
-| Real-Time Updates | ✅ Working | None |
-| API Endpoints | ✅ Working | None |
-| WebSocket | ✅ Working | None |
-| Database (SQLite) | ✅ Working | None |
-| Email Alerts | ⚪ Optional | SMTP credentials |
-| Telegram Alerts | ⚪ Optional | Bot token |
-| Slack Alerts | ⚪ Optional | Webhook URL |
+- [ ] Supabase project created
+- [ ] Migration SQL executed successfully
+- [ ] SUPABASE_URL copied
+- [ ] SUPABASE_SERVICE_KEY copied
+- [ ] JWT_SECRET generated
+- [ ] Repository forked
+- [ ] Vercel project imported
+- [ ] Environment variables added
+- [ ] Deployment successful
+- [ ] Dashboard accessible
 
 ---
 
-## 🎓 Quick Usage
+## 🆘 Troubleshooting
 
-### Ingest Data via API
+### "Database connection failed"
 
-```bash
-curl -X POST https://your-app.vercel.app/api/ingest/observation \
-  -H "Content-Type: application/json" \
-  -d '{"observation_type": "test", "payload": {"value": 100}}'
-```
+- Check `SUPABASE_URL` is correct
+- Check `SUPABASE_SERVICE_KEY` is the **service_role** key (not anon key)
+- Verify migration ran successfully in Supabase SQL Editor
 
-### View in Dashboard
+### "Authentication failed"
 
-Go to: `https://your-app.vercel.app/dashboard`
+- Check `JWT_SECRET` is set
+- Make sure it's at least 32 characters
 
-- See your data in real-time charts
-- Anomaly detection runs automatically
-- Patterns detected automatically
-- Alerts trigger if configured
+### "Dashboard not loading"
 
----
-
-## 🔧 Advanced: Upgrade Database (Optional)
-
-Want to use PostgreSQL instead of SQLite?
-
-Just add ONE more environment variable in Vercel:
-
-```
-DATABASE_URL=postgresql://user:password@host:5432/database
-```
-
-System automatically switches to PostgreSQL and runs migrations!
+- Check Vercel deployment logs
+- Verify all 3 env vars are set
+- Try redeploying from Vercel dashboard
 
 ---
 
-## 🛠️ Tech Stack
+## 📞 Need Help?
 
-- Next.js 14 (Frontend)
-- Express (Backend API)
-- SQLite (Embedded database)
-- Socket.io (Real-time)
-- Recharts (Visualizations)
-- Tailwind CSS (Styling)
+- [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+- [GitHub Issues](https://github.com/iacosta3994/panopticon-engine/issues)
+- [Full Documentation](docs/)
 
 ---
 
-## 📖 Documentation
-
-- [Complete System Overview](COMPLETE_SYSTEM_OVERVIEW.md)
-- [API Reference](docs/API.md)
-- [Dashboard Guide](docs/DASHBOARD.md)
-- [Integrations](docs/INTEGRATIONS.md)
-
----
-
-## 🆚 Comparison
-
-**Before** (Complex deployment):
-```
-❌ Set up PostgreSQL/Supabase
-❌ Configure 10+ environment variables
-❌ Run migrations manually
-❌ Set up external services
-❌ 30+ minutes of configuration
-```
-
-**Now** (Simple deployment):
-```
-✅ Fork repo
-✅ Deploy on Vercel
-✅ Add 1 env var (or use default)
-✅ 2 minutes total
-✅ Everything works immediately
-```
-
----
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/iacosta3994/panopticon-engine/issues)
-- **Docs**: `/docs` directory
-
----
-
-## 📄 License
-
-MIT License
-
----
-
-**Panopticon Engine** - *The easiest way to monitor and analyze data.*
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fiacosta3994%2Fpanopticon-engine)
-
-Built with ❤️ by [Ian Acosta](https://github.com/iacosta3994)
+**Deployment Time**: 5 minutes  
+**Complexity**: Easy  
+**Cost**: Free tier available
